@@ -83,6 +83,13 @@ public class BaseResult {
         return result;
     }
 
+    public static BaseResult makeResult(ExceptionEnum exceptionEnum){
+        BaseResult result = new BaseResult();
+        result.setCode(exceptionEnum.getCode());
+        result.setMessage(exceptionEnum.getMessage());
+        return result;
+    }
+
     public String getCode() {
         return code;
     }

@@ -44,4 +44,13 @@ public class MainController {
     public BaseResult getMoviesByName(HttpServletRequest request, String videoName,Integer page,Integer page_size){
         return mainService.getMoviesByNameInfo(videoName,page,page_size);
     }
+
+    /**
+     * 发送邮件
+     */
+    @RequestMapping(value = "sendEmail.do",method = RequestMethod.POST)
+    @ResponseBody
+    public BaseResult sendEmail(HttpServletRequest request,String email){
+        return mainService.sendEmail(request.getSession().getId(),email);
+    }
 }

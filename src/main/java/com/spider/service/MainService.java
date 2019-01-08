@@ -93,4 +93,16 @@ public class MainService {
         baseResult.setResponseBody(result);
         return baseResult;
     }
+
+    /**
+     * 发送email邮件
+     */
+    public BaseResult sendEmail(String sessionId,String email) {
+        if(CommonUtils.invalidEmailFormat(email)){
+            return BaseResult.makeResult(ExceptionEnum.EMAILFORMATERR);
+        }
+        //获得随机验证码
+        String code = CommonUtils.randomCode();
+        return new BaseResult();
+    }
 }

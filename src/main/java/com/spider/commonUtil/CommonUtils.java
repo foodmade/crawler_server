@@ -85,6 +85,20 @@ public class CommonUtils {
 
     }
 
+    /**
+     * 验证邮箱格式
+     */
+    public static boolean invalidEmailFormat(String email) {
+        if(isEmpty(email)){
+            return false;
+        }
+        return email.matches("^[_A-Za-z0-9-\\\\+]+(\\\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\\\.[A-Za-z0-9]+)*(\\\\.[A-Za-z]{2,})$");
+    }
+
+    public static String randomCode() {
+        return Math.random()*9000+1000+"";
+    }
+
     public MongoUtils getMongoUtils() {
         return mongoUtils;
     }
