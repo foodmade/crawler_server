@@ -1,0 +1,35 @@
+{
+	"CRAWLER":{
+        	"workersCount":1,
+        	"workerRetryMaxCount":3,
+        	"requestTaskTimeElapse":300,
+        	"workerHeartBeatTimeElapse":1000,
+        	"maxTaskInQueue":3,
+        	"workerTimeout":120000
+    },
+
+    "DATA_CENTER":{
+			"accessToken":"",
+			"hostname":"127.0.0.1",
+			"port":8452,
+			"agent":false,
+
+			"taskReqPath":"/getMacroTaskResult.do",
+			"taskReqMethod":"GET",
+			"taskReqHeaders":{},
+
+			"taskRspPath":"/commitMacroTaskResult.do",
+			"taskRspMethod":"POST",
+			"taskRspHeaders":{}
+
+
+    },
+   "LOG":{
+	"level":4,
+	"_LOG_LEVEL_NO_LOG":0,
+	"_LOG_LEVEL_ERROR":1,
+	"_LOG_LEVEL_WARNING":2,
+	"_LOG_LEVEL_INFO":4,
+	"_LOG_LEVEL_DEBUG":8
+  }
+}

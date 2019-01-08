@@ -1,0 +1,35 @@
+{
+	"CRAWLER":{
+        	"workersCount":1,
+        	"workerRetryMaxCount":3,
+        	"requestTaskTimeElapse":300,
+        	"workerHeartBeatTimeElapse":1000,
+        	"maxTaskInQueue":3,
+        	"workerTimeout":120000
+    },
+
+    "DATA_CENTER":{
+			"accessToken":"",
+			"hostname":"192.168.1.4",
+			"port":8082,
+			"agent":false,
+
+			"taskReqPath":"/getYunPanTaskResult.do",
+			"taskReqMethod":"GET",
+			"taskReqHeaders":{},
+
+			"taskRspPath":"/commitYunPanTaskResult.do",
+			"taskRspMethod":"POST",
+			"taskRspHeaders":{}
+
+
+    },
+   "LOG":{
+	"level":1,
+	"_LOG_LEVEL_NO_LOG":0,
+	"_LOG_LEVEL_ERROR":1,
+	"_LOG_LEVEL_WARNING":2,
+	"_LOG_LEVEL_INFO":4,
+	"_LOG_LEVEL_DEBUG":8
+  }
+}
