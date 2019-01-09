@@ -4,11 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.mongodb.*;
 import com.spider.KQRobot.KQClient;
+import com.spider.commonUtil.EmailUtil;
 import com.spider.commonUtil.MongoTable;
 import com.spider.commonUtil.MongoUtils;
 import com.spider.commonUtil.RobotOnMessageHandler;
 import com.spider.taskPool.TaskParams;
 import com.spider.taskPool.TaskPool;
+import org.apache.bval.constraints.Email;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
@@ -34,10 +36,15 @@ public class InitTaskService {
     @Inject
     RobotOnMessageHandler robotOnMessageHandler;
 
+    @Inject
+    EmailUtil emailUtil;
+
     @PostConstruct
     private void initTask(){
         //初始化任务池
         initAllTaskOptions();
+        //初始化邮件发送器
+        emailUtil.initMailSender();
         //初始化酷Q客户端
         try {
 //            KQClient.runClient(appProperties.getProperty("kqHost"),robotOnMessageHandler);

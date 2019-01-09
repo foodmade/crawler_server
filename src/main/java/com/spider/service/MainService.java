@@ -5,11 +5,9 @@ import com.alibaba.fastjson.TypeReference;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.spider.commonUtil.CommonUtils;
-import com.spider.commonUtil.MongoTable;
-import com.spider.commonUtil.MongoUtils;
-import com.spider.commonUtil.RobotOnMessageHandler;
+import com.spider.commonUtil.*;
 import com.spider.entity.BaseResult;
+import com.spider.entity.RedisModel;
 import com.spider.enumUtil.ExceptionEnum;
 import com.spider.spiderUtil.Item;
 import org.springframework.stereotype.Service;
@@ -22,9 +20,11 @@ import java.util.List;
 @Service
 public class MainService {
     @Inject
-    MongoUtils mongoUtils;
+    private MongoUtils mongoUtils;
     @Inject
-    RobotOnMessageHandler robotOnMessageHandler;
+    private RedisCacheManager redisCacheManager;
+    @Inject
+    private EmailUtil emailUtil;
 
     public BaseResult getMovieTypeInfo(){
         DBObject query = new BasicDBObject()
@@ -101,8 +101,27 @@ public class MainService {
         if(CommonUtils.invalidEmailFormat(email)){
             return BaseResult.makeResult(ExceptionEnum.EMAILFORMATERR);
         }
+        if(CommonUtils.isEmpty(sessionId)){
+            return BaseResult.makeResult(ExceptionEnum.REQUESTERR);
+        }
         //获得随机验证码
         String code = CommonUtils.randomCode();
-        return new BaseResult();
+        //缓存验证码至redis
+        cacheCodeToRedis(code,sessionId);
+        //发送邮件
+        try {
+            emailUtil.sendMail(email,"您的验证码","【Search Movies】your code:["+code+"]");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new BaseResult(ExceptionEnum.SUCCESS);
+    }
+
+    private void cacheCodeToRedis(String code, String sessionId) {
+        RedisModel redisModel = new RedisModel();
+        redisModel.setValue(code);
+        redisModel.setKey(sessionId);
+        redisModel.setExpire(300);
+        redisCacheManager.set(redisModel);
     }
 }

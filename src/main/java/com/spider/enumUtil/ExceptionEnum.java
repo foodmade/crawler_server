@@ -5,7 +5,8 @@ public enum  ExceptionEnum {
     TASKTYPE_ERR("10001","任务类型异常"),
     SUCCESS("200","成功"),
     PARAMEMPTYPEROR("10002","参数缺失"),
-    EMAILFORMATERR("10003","邮箱格式错误");
+    EMAILFORMATERR("10003","邮箱格式错误"),
+    REQUESTERR("10004","异常的请求");
 
     private String code;
 

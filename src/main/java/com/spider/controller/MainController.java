@@ -48,7 +48,7 @@ public class MainController {
     /**
      * 发送邮件
      */
-    @RequestMapping(value = "sendEmail.do",method = RequestMethod.POST)
+    @RequestMapping(value = "sendEmail.do",method = RequestMethod.GET)
     @ResponseBody
     public BaseResult sendEmail(HttpServletRequest request,String email){
         return mainService.sendEmail(request.getSession().getId(),email);

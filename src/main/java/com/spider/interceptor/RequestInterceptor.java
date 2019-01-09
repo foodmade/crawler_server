@@ -13,6 +13,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         logger.debug("拦截ip:"+request.getRemoteAddr());
+        logger.info("sessionId:"+request.getSession().getId());
         return true;
     }
 }
