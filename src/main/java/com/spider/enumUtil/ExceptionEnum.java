@@ -6,7 +6,8 @@ public enum  ExceptionEnum {
     SUCCESS("200","成功"),
     PARAMEMPTYPEROR("10002","参数缺失"),
     EMAILFORMATERR("10003","邮箱格式错误"),
-    REQUESTERR("10004","异常的请求");
+    REQUESTERR("10004","异常的请求"),
+    LATERRETRY("10005","请稍后重试");
 
     private String code;
 

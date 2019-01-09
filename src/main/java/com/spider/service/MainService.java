@@ -11,6 +11,7 @@ import com.spider.entity.RedisModel;
 import com.spider.enumUtil.ExceptionEnum;
 import com.spider.spiderUtil.Item;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -104,6 +105,10 @@ public class MainService {
         if(CommonUtils.isEmpty(sessionId)){
             return BaseResult.makeResult(ExceptionEnum.REQUESTERR);
         }
+        //检查发送邮件时间间隔
+        if(!checkSendIsTimeout(sessionId)){
+            return BaseResult.makeResult(ExceptionEnum.LATERRETRY);
+        }
         //获得随机验证码
         String code = CommonUtils.randomCode();
         //缓存验证码至redis
@@ -113,15 +118,23 @@ public class MainService {
             emailUtil.sendMail(email,"您的验证码","【Search Movies】your code:["+code+"]");
         } catch (Exception e) {
             e.printStackTrace();
+            return new BaseResult(ExceptionEnum.SERVER_ERR);
         }
         return new BaseResult(ExceptionEnum.SUCCESS);
     }
 
+    private boolean checkSendIsTimeout(String sessionId) {
+        Jedis jedis = redisCacheManager.getJedis();
+        boolean valid;
+        try {
+            valid = jedis.get(sessionId) == null;
+        } finally {
+            jedis.close();
+        }
+        return valid;
+    }
+
     private void cacheCodeToRedis(String code, String sessionId) {
-        RedisModel redisModel = new RedisModel();
-        redisModel.setValue(code);
-        redisModel.setKey(sessionId);
-        redisModel.setExpire(300);
-        redisCacheManager.set(redisModel);
+        redisCacheManager.set(CommonUtils.createRedisMode(sessionId,code,Const._AUTHCODE_DEFAULT_TIME));
     }
 }
