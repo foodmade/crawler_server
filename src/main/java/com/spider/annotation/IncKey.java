@@ -6,9 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 标识主键
+ * 标识自增主键
  */
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AutoIncKey {
+@Target(ElementType.FIELD)
+public @interface IncKey {
 }

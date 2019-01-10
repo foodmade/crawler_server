@@ -45,6 +45,11 @@
             ignore-unresolvable="true"
             location="classpath*:jdbc.properties"/>
 
+    <!-- 加载配置属性文件 classpath*:mongo.properties -->
+    <context:property-placeholder
+            ignore-unresolvable="true"
+            location="classpath*:mongo.properties"/>
+
     <!--拦截器配置-->
     <mvc:interceptors>
         <mvc:interceptor>
@@ -54,6 +59,7 @@
     </mvc:interceptors>
 
     <bean class="com.spider.listener.SaveEventListener"/>
+    <bean class="com.spider.listener.BranchSaveMongoEventListener"/>
 
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
         <property name="ignoreDefaultModelOnRedirect" value="true"/>
@@ -75,4 +81,5 @@
     </bean>
     <import resource="spring-dataSource.xml"/>
     <import resource="spring-redis.xml"/>
+    <import resource="spring-mongo.xml"/>
 </beans>
