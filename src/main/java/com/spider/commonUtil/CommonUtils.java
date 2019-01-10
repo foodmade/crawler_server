@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.spider.entity.RedisModel;
 import com.spider.spiderUtil.Item;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -96,7 +97,7 @@ public class CommonUtils {
     }
 
     public static String randomCode() {
-        return Math.random()*9000+1000+"";
+        return ((int) (Math.random() * 9000) +1000)+"";
     }
 
     public MongoUtils getMongoUtils() {
@@ -239,6 +240,25 @@ public class CommonUtils {
         }
         //取除以256的模
         return videoId & ((1<<8)-1);
+    }
+
+    public static RedisModel createRedisMode(String key,Object value,int expire){
+        RedisModel redisModel = createRedisMode(key, value);
+        redisModel.setExpire(expire);
+        return redisModel;
+    }
+
+    public static RedisModel createRedisMode(String key,Object value,Integer dataBase){
+        RedisModel redisModel = createRedisMode(key, value);
+        redisModel.setDatabase(dataBase);
+        return redisModel;
+    }
+
+    public static RedisModel createRedisMode(String key,Object value){
+        RedisModel redisModel = new RedisModel();
+        redisModel.setKey(key);
+        redisModel.setValue(value);
+        return redisModel;
     }
 
 }

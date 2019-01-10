@@ -53,4 +53,13 @@ public class MainController {
     public BaseResult sendEmail(HttpServletRequest request,String email){
         return mainService.sendEmail(request.getSession().getId(),email);
     }
+
+    /**
+     * 注册用户
+     */
+    @RequestMapping(value = "registerAccount.do",method = RequestMethod.POST)
+    @ResponseBody
+    public BaseResult registerAccount(){
+        return null;
+    }
 }
