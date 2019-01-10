@@ -41,6 +41,7 @@ public class EmailUtil {
      * @param to 接受人
      * @param subject 主题
      * @param html 发送内容
+     *  todo：暂时只支持QQ邮箱
      */
     public void sendMail(String to, String subject, String html) throws Exception {
         MimeMessage mimeMessage = mailSender.createMimeMessage();

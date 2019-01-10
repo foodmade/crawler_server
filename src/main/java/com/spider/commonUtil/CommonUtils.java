@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 public class CommonUtils {
 
     @Inject
-    MongoUtils mongoUtils;
+    private MongoUtils mongoUtils;
 
     private static Logger logger = Logger.getLogger(CommonUtils.class);
 
