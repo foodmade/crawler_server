@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.spider.annotation.SerializeSign;
+import com.spider.commonUtil.mongoUtil.MongoUtils;
 import com.spider.entity.RedisModel;
 import com.spider.spiderUtil.Item;
 import org.apache.log4j.Logger;
@@ -18,10 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Component
@@ -53,6 +52,10 @@ public class CommonUtils {
             String name = f.getName();
             if (!f.isAccessible()) {
                 f.setAccessible(true);
+            }
+            SerializeSign sign = f.getAnnotation(SerializeSign.class);
+            if(sign!=null && !sign.needSerialize()){
+                continue;
             }
             try {
                 Object oj = f.get(bean);
@@ -259,6 +262,24 @@ public class CommonUtils {
         redisModel.setKey(key);
         redisModel.setValue(value);
         return redisModel;
+    }
+
+    /**
+     * 获取http首部
+     *
+     * @param request
+     * @return
+     */
+
+    public static HashMap<String, String> getHeader(HttpServletRequest request) {
+        HashMap<String, String> map = new HashMap<String, String>();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String element = headerNames.nextElement();
+            String value = request.getHeader(element);
+            map.put(element.toLowerCase(), value);
+        }
+        return map;
     }
 
 }

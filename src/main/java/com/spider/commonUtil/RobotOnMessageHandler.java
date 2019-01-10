@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.spider.commonUtil.mongoUtil.MongoTable;
+import com.spider.commonUtil.mongoUtil.MongoUtils;
 import com.spider.spiderUtil.Item;
 import org.springframework.stereotype.Service;
 

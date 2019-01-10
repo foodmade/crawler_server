@@ -1,11 +1,17 @@
 package com.spider.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.mongodb.DB;
 import com.mongodb.DBObject;
-import com.spider.commonUtil.MongoTable;
-import com.spider.commonUtil.MongoUtils;
+import com.spider.annotation.BaseCheck;
+import com.spider.commonUtil.mongoUtil.MongoTable;
+import com.spider.commonUtil.mongoUtil.MongoUtils;
+import com.spider.entity.BaseResult;
+import com.spider.entity.UserModel;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.inject.Inject;
@@ -29,5 +35,13 @@ public class TestController {
         HashMap<String,Object> result = new HashMap<>();
         result.put("rows",list);
         return result;
+    }
+
+    @RequestMapping(value = "testFilter.do",method = RequestMethod.POST)
+    @ResponseBody
+    @BaseCheck(needLogin = false)
+    public BaseResult testFilter(HttpServletRequest request,@RequestAttribute UserModel paramModel){
+        System.out.println(JSON.toJSONString(paramModel));
+        return new BaseResult();
     }
 }

@@ -1,6 +1,5 @@
 package com.spider.commonUtil;
 
-import com.alibaba.fastjson.JSON;
 import com.spider.entity.RedisModel;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,14 +25,22 @@ public class RedisCacheManager implements InitializingBean {
 
     public void set(RedisModel redisModel){
         if(!paramValid(redisModel)){
-            logger.error("redisModel invalid JSON:【"+redisModel.toString()+"】");
+            logger.error("redisModel invalid SET JSON:【"+redisModel.toString()+"】");
             return;
         }
         try {
-            ops(redisModel);
+            opsSet(redisModel);
         } catch (Exception e) {
             logger.error("do set key err:"+e.getMessage());
         }
+    }
+
+    public String get(RedisModel redisModel){
+        if(!paramValid(redisModel)){
+            logger.error("redisModel invalid GET JSON:【"+redisModel.toString()+"】");
+            return null;
+        }
+        return opsGet(redisModel);
     }
 
     public Jedis getJedis(){
@@ -44,7 +51,25 @@ public class RedisCacheManager implements InitializingBean {
         jedis.close();
     }
 
-    private void ops(RedisModel redisModel){
+    private String opsGet(RedisModel redisModel){
+        if(jedisPool == null){
+            afterPropertiesSet();
+        }
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            jedis.select(redisModel.getDatabase());
+            return jedis.get(redisModel.getKey());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(jedis != null)
+                closeJedis(jedis);
+        }
+        return null;
+    }
+
+    private void opsSet(RedisModel redisModel){
         if(jedisPool == null){
             afterPropertiesSet();
         }

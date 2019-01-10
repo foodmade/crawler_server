@@ -6,8 +6,9 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.spider.commonUtil.*;
+import com.spider.commonUtil.mongoUtil.MongoTable;
+import com.spider.commonUtil.mongoUtil.MongoUtils;
 import com.spider.entity.BaseResult;
-import com.spider.entity.RedisModel;
 import com.spider.enumUtil.ExceptionEnum;
 import com.spider.spiderUtil.Item;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,6 @@ import redis.clients.jedis.Jedis;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -112,7 +112,7 @@ public class MainService {
         //获得随机验证码
         String code = CommonUtils.randomCode();
         //缓存验证码至redis
-        cacheCodeToRedis(code,sessionId);
+        cacheCodeToRedis(code,RedisKey.registerCodeKey(sessionId));
         //发送邮件
         try {
             emailUtil.sendMail(email,"您的验证码","【Search Movies】your code:["+code+"]");
@@ -134,7 +134,7 @@ public class MainService {
         return valid;
     }
 
-    private void cacheCodeToRedis(String code, String sessionId) {
-        redisCacheManager.set(CommonUtils.createRedisMode(sessionId,code,Const._AUTHCODE_DEFAULT_TIME));
+    private void cacheCodeToRedis(String code, String key) {
+        redisCacheManager.set(CommonUtils.createRedisMode(key,code,Const._AUTHCODE_DEFAULT_TIME));
     }
 }

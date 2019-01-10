@@ -1,14 +1,9 @@
 package com.spider.spiderUtil.saveUtil;
 
-import com.mongodb.DBCollection;
-import com.spider.commonUtil.CommonUtils;
-import com.spider.commonUtil.MongoTable;
 import com.spider.spiderUtil.Item;
 import com.spider.spiderUtil.WorkData;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public abstract class AbsSave {
 

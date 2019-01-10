@@ -7,7 +7,10 @@ public enum  ExceptionEnum {
     PARAMEMPTYPEROR("10002","参数缺失"),
     EMAILFORMATERR("10003","邮箱格式错误"),
     REQUESTERR("10004","异常的请求"),
-    LATERRETRY("10005","请稍后重试");
+    LATERRETRY("10005","请稍后重试"),
+    USERLOGINEXPIRE("10006","登陆信息已失效,请重新登陆"),
+    AUTHCODEERR("10007","验证码输入错误或已过期"),
+    CONFIRMPASSWORDERR("10008","2次密码输入不一致");
 
     private String code;
 

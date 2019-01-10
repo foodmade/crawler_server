@@ -7,7 +7,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.spider.commonUtil.CommonUtils;
 import com.spider.commonUtil.DateUtils;
-import com.spider.commonUtil.MongoTable;
+import com.spider.commonUtil.mongoUtil.MongoTable;
 import com.spider.commonUtil.SpiderTypeConst;
 import com.spider.enumUtil.SaveEnum;
 import com.spider.spiderUtil.Item;
