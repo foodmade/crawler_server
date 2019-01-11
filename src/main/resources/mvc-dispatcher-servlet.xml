@@ -40,6 +40,7 @@
     <util:properties id="appProperties" location="classpath*:app.properties"/>
     <util:properties id="mongoProperties" location="classpath*:mongo.properties"/>
     <util:properties id="emailProperties" location="classpath*:email.properties"/>
+    <util:properties id="rsaProperties" location="classpath*:rsa.properties"/>
     <!-- 加载配置属性文件 classpath*:jdbc.properties -->
     <context:property-placeholder
             ignore-unresolvable="true"

@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -282,4 +283,10 @@ public class CommonUtils {
         return map;
     }
 
+    //首字母大写
+    public static String captureName(String name) {
+        char[] cs=name.toCharArray();
+        cs[0]-=32;
+        return String.valueOf(cs);
+    }
 }

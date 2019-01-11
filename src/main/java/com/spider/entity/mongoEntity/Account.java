@@ -1,12 +1,10 @@
 package com.spider.entity.mongoEntity;
 
 import com.spider.annotation.BranchSave;
+import com.spider.annotation.Encrypted;
 import com.spider.annotation.IncKey;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -35,11 +33,12 @@ public class Account {
 
     @Field
     @ApiModelProperty(value = "密码")
+    @Encrypted
     private String password;
 
     @Field
     @ApiModelProperty(value = "权限级别")
-    private String permissionLevel;
+    private int permissionLevel;
 
     @Field(value = "userDetailInfo")
     @DBRef

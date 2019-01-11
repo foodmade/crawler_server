@@ -2,8 +2,16 @@ package com.spider.listener;
 
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
+import com.spider.annotation.Encrypted;
 import com.spider.annotation.IncKey;
+import com.spider.commonUtil.CommonUtils;
+import com.spider.commonUtil.RSA.RSAUtils;
+import com.spider.commonUtil.config.RSAConfig;
 import com.spider.entity.mongoEntity.SeqInfo;
 import org.apache.log4j.Logger;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
@@ -27,6 +35,9 @@ public class SaveEventListener extends AbstractMongoEventListener<Object> {
     @Inject
     private MongoTemplate mongoTemplate;
 
+    @Inject
+    RSAConfig rsaConfig;
+
     /**
      * 前置操作
      */
@@ -41,6 +52,25 @@ public class SaveEventListener extends AbstractMongoEventListener<Object> {
                     if (field.isAnnotationPresent(IncKey.class)) {
                         // 设置自增ID
                         field.set(source, getNextId(source.getClass().getSimpleName()));
+                    }
+                    // 如果字段添加了自定义的Encrypted注解 则代表文本需要加密
+                    if(field.isAnnotationPresent(Encrypted.class)){
+                        //只支持对String数据类型加密
+                        if(String.class.getName().equals(field.getType().getName())){
+                            try {
+                                //待加密文本
+                                Object text ;
+                                if((text = field.get(source)) != null){
+                                    //设置加密后的文本
+                                    field.set(source,RSAUtils.publicEncrypt(text.toString(),RSAUtils.getPublicKey(rsaConfig.getPub_rsa())));
+                                }
+                            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                                logger.error("文本加密出现异常 e:" + e.getMessage());
+                                e.printStackTrace();
+                            }
+                        }else{
+                            logger.warn("不支持加密的数据类型:"+field.getType().getName());
+                        }
                     }
                 }
             });

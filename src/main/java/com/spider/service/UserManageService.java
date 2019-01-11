@@ -6,8 +6,11 @@ import com.spider.commonUtil.*;
 import com.spider.commonUtil.mongoUtil.MongoTable;
 import com.spider.commonUtil.mongoUtil.MongoUtils;
 import com.spider.entity.BaseResult;
+import com.spider.entity.mongoEntity.Account;
+import com.spider.entity.mongoEntity.UserDetailInfo;
 import com.spider.enumUtil.ExceptionEnum;
 import org.apache.log4j.Logger;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -23,6 +26,9 @@ public class UserManageService {
 
     @Inject
     private MongoUtils mongoUtils;
+
+    @Inject
+    private MongoTemplate mongoTemplate;
 
     /**
      * 检查用户是否处于登陆状态
@@ -86,17 +92,27 @@ public class UserManageService {
     }
 
     private Boolean writeAccountInfo(RegisterModel registerModel) {
-        DBObject accountDB = CommonUtils.getDBObject(registerModel);
-        if(accountDB == null){
+        Account account = getAccount(registerModel);
+        if(account == null){
             return false;
         }
         try {
-            mongoUtils.getMongoDB().getCollection(MongoTable._USER_INFO).insert(accountDB);
+            mongoTemplate.insert(account);
         } catch (Exception e) {
             logger.error("写入注册用户信息失败 e:"+e.getMessage());
             return false;
         }
         return true;
+    }
+
+    private Account getAccount(RegisterModel registerModel) {
+        Account account = new Account();
+        account.setUserDetailInfo(new UserDetailInfo());
+        account.setUserNick(registerModel.getUsernick());
+        account.setUserName(registerModel.getUsername());
+        account.setPassword(registerModel.getPassword());
+
+        return account;
     }
 
     /**

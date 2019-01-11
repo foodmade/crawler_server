@@ -6,6 +6,8 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.spider.Vo.inModel.RegisterModel;
 import com.spider.commonUtil.*;
+import com.spider.commonUtil.RSA.RSAUtils;
+import com.spider.commonUtil.config.RSAConfig;
 import com.spider.commonUtil.mongoUtil.MongoTable;
 import com.spider.commonUtil.mongoUtil.MongoUtils;
 import com.spider.commonUtil.mongoUtil.RewriteDBCollention;
@@ -16,7 +18,10 @@ import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import javax.inject.Inject;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
+import java.util.Map;
 
 
 public class ClassTest extends BaseTest{
@@ -29,6 +34,8 @@ public class ClassTest extends BaseTest{
     MongoUtils mongoUtils;
     @Inject
     MongoTemplate mongoTemplate;
+    @Inject
+    RSAConfig rsaConfig;
 
     public static void main(String[] args) throws Exception {
         RegisterModel registerModel = new RegisterModel();
@@ -45,6 +52,23 @@ public class ClassTest extends BaseTest{
     }
 
     @Test
+    public void testRSA() throws InvalidKeySpecException, NoSuchAlgorithmException {
+   /*     Map<String, String> keyMap = RSAUtils.createKeys(1024);
+        String  publicKey = keyMap.get("publicKey");
+        String  privateKey = keyMap.get("privateKey");*/
+ /*       System.out.println("公钥: \n\r" + publicKey);
+        System.out.println("私钥： \n\r" + privateKey);*/
+
+        String str = "chen19960119";
+        System.out.println("\r明文：\r\n" + str);
+        String encodedData = RSAUtils.publicEncrypt(str, RSAUtils.getPublicKey(rsaConfig.getPub_rsa()));
+        System.out.println("密文：\r\n" + encodedData);
+        String decodedData = RSAUtils.privateDecrypt(encodedData, RSAUtils.getPrivateKey(rsaConfig.getPrivate_rsa()));
+        System.out.println("解密后文字: \r\n" + decodedData);
+
+    }
+
+    @Test
     public void testLinstener(){
         Account account = new Account();
         account.setPassword("111");
@@ -52,7 +76,7 @@ public class ClassTest extends BaseTest{
         account.setUserName("chen");
         account.setUserNick("xiaominmg");
         UserDetailInfo userDetailInfo = new UserDetailInfo();
-        userDetailInfo.setCord("511623199601197670");
+        userDetailInfo.setCordId("511623199601197670");
         account.setUserDetailInfo(userDetailInfo);
         mongoTemplate.insert(account);
     }

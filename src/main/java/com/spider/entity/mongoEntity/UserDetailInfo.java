@@ -19,5 +19,9 @@ public class UserDetailInfo {
 
     @Field
     @ApiModelProperty(value = "身份证号码")
-    private String cord;
+    private String cordId;
+
+    @Field
+    @ApiModelProperty(value = "真实姓名")
+    private String realName;
 }

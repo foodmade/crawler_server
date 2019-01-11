@@ -124,14 +124,7 @@ public class MainService {
     }
 
     private boolean checkSendIsTimeout(String sessionId) {
-        Jedis jedis = redisCacheManager.getJedis();
-        boolean valid;
-        try {
-            valid = jedis.get(sessionId) == null;
-        } finally {
-            jedis.close();
-        }
-        return valid;
+        return redisCacheManager.get(CommonUtils.createRedisMode(sessionId,null)) == null;
     }
 
     private void cacheCodeToRedis(String code, String key) {
