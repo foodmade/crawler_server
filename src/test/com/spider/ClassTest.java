@@ -1,16 +1,11 @@
 package com.spider;
 
 import com.alibaba.fastjson.JSON;
-import com.google.gson.Gson;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
 import com.spider.Vo.inModel.RegisterModel;
 import com.spider.commonUtil.*;
 import com.spider.commonUtil.RSA.RSAUtils;
 import com.spider.commonUtil.config.RSAConfig;
-import com.spider.commonUtil.mongoUtil.MongoTable;
-import com.spider.commonUtil.mongoUtil.MongoUtils;
-import com.spider.commonUtil.mongoUtil.RewriteDBCollention;
+import com.spider.commonUtil.mongoUtil.MongoUtil;
 import com.spider.entity.mongoEntity.Account;
 import com.spider.entity.mongoEntity.SeqInfo;
 import com.spider.entity.mongoEntity.UserDetailInfo;
@@ -21,7 +16,6 @@ import javax.inject.Inject;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
-import java.util.Map;
 
 
 public class ClassTest extends BaseTest{
@@ -31,7 +25,7 @@ public class ClassTest extends BaseTest{
     @Inject
     EmailUtil emailUtil;
     @Inject
-    MongoUtils mongoUtils;
+    MongoUtil mongoUtil;
     @Inject
     MongoTemplate mongoTemplate;
     @Inject

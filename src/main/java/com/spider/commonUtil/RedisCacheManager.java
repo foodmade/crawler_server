@@ -43,6 +43,33 @@ public class RedisCacheManager implements InitializingBean {
         return opsGet(redisModel);
     }
 
+    public Boolean del(RedisModel redisModel){
+        if(!paramValid(redisModel)){
+            logger.error("redisModel invalid DEL JSON:【"+redisModel.toString()+"】");
+            return null;
+        }
+        return opsDel(redisModel);
+    }
+
+    private Boolean opsDel(RedisModel redisModel) {
+        if(jedisPool == null){
+            afterPropertiesSet();
+        }
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            jedis.del(redisModel.getKey());
+        }catch (Exception e){
+            logger.error("redis execute del fail e:"+e.getMessage());
+            return false;
+        }finally {
+            if(jedis != null){
+                jedis.close();
+            }
+        }
+        return true;
+    }
+
     public Jedis getJedis(){
         return jedisPool.getResource();
     }

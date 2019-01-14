@@ -1,20 +1,24 @@
 package com.spider.service;
 
-import com.mongodb.DBObject;
 import com.spider.Vo.inModel.RegisterModel;
 import com.spider.commonUtil.*;
-import com.spider.commonUtil.mongoUtil.MongoTable;
-import com.spider.commonUtil.mongoUtil.MongoUtils;
+import com.spider.commonUtil.RSA.RSAUtils;
+import com.spider.commonUtil.config.RSAConfig;
+import com.spider.commonUtil.mongoUtil.MongoUtil;
 import com.spider.entity.BaseResult;
 import com.spider.entity.mongoEntity.Account;
 import com.spider.entity.mongoEntity.UserDetailInfo;
 import com.spider.enumUtil.ExceptionEnum;
 import org.apache.log4j.Logger;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 @Service
 public class UserManageService {
@@ -25,10 +29,10 @@ public class UserManageService {
     private RedisCacheManager redisCacheManager;
 
     @Inject
-    private MongoUtils mongoUtils;
+    private MongoTemplate mongoTemplate;
 
     @Inject
-    private MongoTemplate mongoTemplate;
+    private RSAConfig rsaConfig;
 
     /**
      * 检查用户是否处于登陆状态
@@ -79,6 +83,8 @@ public class UserManageService {
         if(!invalidCode(sessionId,registerModel.getCode())){
             return BaseResult.makeResult(ExceptionEnum.AUTHCODEERR);
         }
+        //删除缓存的验证码
+        redisCacheManager.del(CommonUtils.createRedisMode(RedisKey.registerCodeKey(sessionId),null));
         //检查2次密码是否一致
         if(!registerModel.getConfirmPassword().equals(registerModel.getPassword())){
             return BaseResult.makeResult(ExceptionEnum.CONFIRMPASSWORDERR);
@@ -130,6 +136,66 @@ public class UserManageService {
             e.printStackTrace();
         }
 
-        return !CommonUtils.isEmpty(cacheCode) || code.toString().equals(cacheCode);
+        return code.toString().equals(cacheCode);
+    }
+
+    /**
+     * 检查用户是否已经存在
+     */
+    public BaseResult checkUserIsExist(RegisterModel registerModel) {
+
+        if(registerModel == null || CommonUtils.isEmpty(registerModel.getUsername())){
+            return BaseResult.makeResult(ExceptionEnum.PARAMEMPTYPEROR);
+        }
+        if(userIsExist(registerModel.getUsername())){
+            return BaseResult.makeResult(ExceptionEnum.EXISTEUSER);
+        }
+        return BaseResult.success(null);
+    }
+
+    public Boolean userIsExist(String userName){
+        try {
+            return mongoTemplate.exists(new Query(Criteria.where("userName").is(userName)),Account.class);
+        } catch (Exception e) {
+            logger.error("查询用户信息失败 e:"+e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public BaseResult login(RegisterModel paramModel) {
+        if(paramModel == null ||
+                CommonUtils.isEmpty(paramModel.getUsername()) ||
+                CommonUtils.isEmpty(paramModel.getPassword())){
+            return BaseResult.makeResult(ExceptionEnum.PARAMEMPTYPEROR);
+        }
+        //查询用户
+        Account account = getAccountByUserName(paramModel.getUsername());
+        if(account == null){
+            return BaseResult.makeResult(ExceptionEnum.USERINFOERR);
+        }
+        try {
+            //解密
+            String encodePwd = RSAUtils.privateDecrypt(account.getPassword(), RSAUtils.getPrivateKey(rsaConfig.getPrivate_rsa()));
+            if(paramModel.getPassword().equals(encodePwd)){
+                return BaseResult.success(null);
+            }
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+        return BaseResult.makeResult(ExceptionEnum.USERINFOERR);
+    }
+
+    private Account getAccountByUserName(String username) {
+        if(CommonUtils.isEmpty(username)){
+            return null;
+        }
+        try {
+            return mongoTemplate.findOne(new Query(Criteria.where("userName").is(username)),Account.class);
+        } catch (Exception e) {
+            logger.error("根据userName查询用户信息失败 {login.do}");
+            e.printStackTrace();
+        }
+        return null;
     }
 }

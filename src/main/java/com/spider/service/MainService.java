@@ -7,12 +7,11 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.spider.commonUtil.*;
 import com.spider.commonUtil.mongoUtil.MongoTable;
-import com.spider.commonUtil.mongoUtil.MongoUtils;
+import com.spider.commonUtil.mongoUtil.MongoUtil;
 import com.spider.entity.BaseResult;
 import com.spider.enumUtil.ExceptionEnum;
 import com.spider.spiderUtil.Item;
 import org.springframework.stereotype.Service;
-import redis.clients.jedis.Jedis;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ import java.util.List;
 @Service
 public class MainService {
     @Inject
-    private MongoUtils mongoUtils;
+    private MongoUtil mongoUtil;
     @Inject
     private RedisCacheManager redisCacheManager;
     @Inject
@@ -31,7 +30,7 @@ public class MainService {
         DBObject query = new BasicDBObject()
                 .append("level",2);
 
-        DBCollection collection = mongoUtils.getMongoDB().getCollection(MongoTable._CATE_MAPPER);
+        DBCollection collection = mongoUtil.getMongoDB().getCollection(MongoTable._CATE_MAPPER);
         List<DBObject> data = collection.find(query,CommonUtils.getFelid()).toArray();
         return new BaseResult(data);
     }
@@ -40,7 +39,7 @@ public class MainService {
         if(CommonUtils.isEmpty(videoId)){
             return new BaseResult(ExceptionEnum.PARAMEMPTYPEROR);
         }
-        DBCollection collection = mongoUtils
+        DBCollection collection = mongoUtil
                 .getMongoDB()
                 .getCollection(MongoTable._VIDEO_SOURCES);
 
@@ -79,7 +78,7 @@ public class MainService {
 
         DBObject query = new BasicDBObject()
                 .append("videoName",CommonUtils.getPatternFiled(name));
-        DBCollection collection = mongoUtils.getMongoDB().getCollection(MongoTable._VIDEO_SOURCES);
+        DBCollection collection = mongoUtil.getMongoDB().getCollection(MongoTable._VIDEO_SOURCES);
         long count = collection.count(query);
         List<DBObject> items =  collection.find(query,CommonUtils.getFelid()).skip((page-1)*page_size).limit(page_size).toArray();
 

@@ -434,7 +434,7 @@ public abstract class AbstractGeneraSpiderTaskMaker {
 
         long start = System.currentTimeMillis();
         try {
-            DBCollection collection = commonUtils.getMongoUtils().getMongoDB().getCollection(MongoTable._VIDEO_SOURCES);
+            DBCollection collection = commonUtils.getMongoUtil().getMongoDB().getCollection(MongoTable._VIDEO_SOURCES);
             List<DBObject> rows =CommonUtils.transDBObject(data);
             collection.insert(rows);
         } catch (Exception e) {

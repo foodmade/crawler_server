@@ -5,7 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.spider.commonUtil.mongoUtil.MongoTable;
-import com.spider.commonUtil.mongoUtil.MongoUtils;
+import com.spider.commonUtil.mongoUtil.MongoUtil;
 import com.spider.spiderUtil.Item;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class RobotOnMessageHandler {
 
     @Inject
-    MongoUtils mongoUtils;
+    MongoUtil mongoUtil;
 
     /**
      * 精确搜索
@@ -31,7 +31,7 @@ public class RobotOnMessageHandler {
         DBObject query = new BasicDBObject()
                         .append("videoName",movieName);
 
-        List<DBObject> items =  mongoUtils.getMongoDB().getCollection(MongoTable._VIDEO_SOURCES).find(query,CommonUtils.getFelid()).toArray();
+        List<DBObject> items =  mongoUtil.getMongoDB().getCollection(MongoTable._VIDEO_SOURCES).find(query,CommonUtils.getFelid()).toArray();
 
         if(items == null || items.isEmpty()){
             return null;
@@ -56,7 +56,7 @@ public class RobotOnMessageHandler {
         DBObject query = new BasicDBObject()
                 .append("videoName",CommonUtils.getPatternFiled(movieName));
 
-        List<DBObject> items =  mongoUtils.getMongoDB().getCollection(MongoTable._VIDEO_SOURCES).find(query,CommonUtils.getFelid()).toArray();
+        List<DBObject> items =  mongoUtil.getMongoDB().getCollection(MongoTable._VIDEO_SOURCES).find(query,CommonUtils.getFelid()).toArray();
 
         if(items == null || items.isEmpty()){
             return null;

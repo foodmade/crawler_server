@@ -5,7 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.mongodb.*;
 import com.spider.commonUtil.EmailUtil;
 import com.spider.commonUtil.mongoUtil.MongoTable;
-import com.spider.commonUtil.mongoUtil.MongoUtils;
+import com.spider.commonUtil.mongoUtil.MongoUtil;
 import com.spider.commonUtil.RobotOnMessageHandler;
 import com.spider.taskPool.TaskParams;
 import com.spider.taskPool.TaskPool;
@@ -25,7 +25,7 @@ public class InitTaskService {
     private static Logger logger = Logger.getLogger(InitTaskService.class);
 
     @Inject
-    MongoUtils mongoUtils;
+    MongoUtil mongoUtil;
 
     @Inject
     Properties appProperties;
@@ -103,7 +103,7 @@ public class InitTaskService {
     private List<DBObject> getAllBaseTask(){
         DBCollection collection;
         try {
-            collection = mongoUtils.getMongoDB().getCollection(MongoTable._BASE_TASK);
+            collection = mongoUtil.getMongoDB().getCollection(MongoTable._BASE_TASK);
         } catch (Exception e) {
             logger.error("获取mongo连接出现异常 e:"+e.getMessage());
             return null;

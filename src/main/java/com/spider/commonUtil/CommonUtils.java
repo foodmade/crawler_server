@@ -5,7 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.spider.annotation.SerializeSign;
-import com.spider.commonUtil.mongoUtil.MongoUtils;
+import com.spider.commonUtil.mongoUtil.MongoUtil;
 import com.spider.entity.RedisModel;
 import com.spider.spiderUtil.Item;
 import org.apache.log4j.Logger;
@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -28,7 +27,7 @@ import java.util.regex.Pattern;
 public class CommonUtils {
 
     @Inject
-    private MongoUtils mongoUtils;
+    private MongoUtil mongoUtil;
 
     private static Logger logger = Logger.getLogger(CommonUtils.class);
 
@@ -104,8 +103,8 @@ public class CommonUtils {
         return ((int) (Math.random() * 9000) +1000)+"";
     }
 
-    public MongoUtils getMongoUtils() {
-        return mongoUtils;
+    public MongoUtil getMongoUtil() {
+        return mongoUtil;
     }
 
     public static String readRequestBuff(HttpServletRequest request){

@@ -8,15 +8,13 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
 
 @Component
-public class MongoUtils {
+public class MongoUtil {
 
-    private static Logger logger = org.apache.log4j.Logger.getLogger(MongoUtils.class);
+    private static Logger logger = org.apache.log4j.Logger.getLogger(MongoUtil.class);
 
     @Inject
     private Properties mongoProperties;

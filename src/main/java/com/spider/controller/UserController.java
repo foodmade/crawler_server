@@ -38,4 +38,22 @@ public class UserController {
     public BaseResult invalidEmailCode(HttpServletRequest request,@RequestAttribute RegisterModel paramModel){
         return userManageService.checkEmailCode(request.getSession().getId(),paramModel.getCode());
     }
+
+    /**
+     * 检查用户名是否已经存在
+     * @return
+     */
+    @RequestMapping(value = "checkUserNameExist.do",method = RequestMethod.POST)
+    @ResponseBody
+    @BaseCheck(needLogin = false,beanClazz = RegisterModel.class)
+    public BaseResult checkUserNameExist(HttpServletRequest request,@RequestAttribute RegisterModel paramModel){
+        return userManageService.checkUserIsExist(paramModel);
+    }
+
+    @RequestMapping(value = "login.do",method = RequestMethod.POST)
+    @ResponseBody
+    @BaseCheck(needLogin = false,beanClazz = RegisterModel.class)
+    public BaseResult login(@RequestAttribute RegisterModel paramModel){
+        return userManageService.login(paramModel);
+    }
 }
