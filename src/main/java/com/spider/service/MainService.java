@@ -11,6 +11,7 @@ import com.spider.commonUtil.mongoUtil.MongoUtil;
 import com.spider.entity.BaseResult;
 import com.spider.enumUtil.ExceptionEnum;
 import com.spider.spiderUtil.Item;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -25,6 +26,10 @@ public class MainService {
     private RedisCacheManager redisCacheManager;
     @Inject
     private EmailUtil emailUtil;
+    @Inject
+    private MongoTemplate mongoTemplate;
+    @Inject
+    private UserManageService userManageService;
 
     public BaseResult getMovieTypeInfo(){
         DBObject query = new BasicDBObject()
@@ -97,7 +102,7 @@ public class MainService {
     /**
      * 发送email邮件
      */
-    public BaseResult sendEmail(String sessionId,String email) {
+    public BaseResult sendEmail(String sessionId, final String email) {
         if(CommonUtils.invalidEmailFormat(email)){
             return BaseResult.makeResult(ExceptionEnum.EMAILFORMATERR);
         }
@@ -108,13 +113,25 @@ public class MainService {
         if(!checkSendIsTimeout(sessionId)){
             return BaseResult.makeResult(ExceptionEnum.LATERRETRY);
         }
+        if(userManageService.userIsExist(email)){
+            return BaseResult.makeResult(ExceptionEnum.EXISTEUSER);
+        }
         //获得随机验证码
-        String code = CommonUtils.randomCode();
+        final String code = CommonUtils.randomCode();
         //缓存验证码至redis
         cacheCodeToRedis(code,RedisKey.registerCodeKey(sessionId));
         //发送邮件
         try {
-            emailUtil.sendMail(email,"您的验证码","【Search Movies】your code:["+code+"]");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        emailUtil.sendMail(email,"您的验证码","【Search Movies】your code:["+code+"]");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         } catch (Exception e) {
             e.printStackTrace();
             return new BaseResult(ExceptionEnum.SERVER_ERR);
@@ -127,6 +144,6 @@ public class MainService {
     }
 
     private void cacheCodeToRedis(String code, String key) {
-        redisCacheManager.set(CommonUtils.createRedisMode(key,code,Const._AUTHCODE_DEFAULT_TIME));
+        redisCacheManager.set(CommonUtils.createRedisMode(key, code, Const._AUTHCODE_DEFAULT_TIME));
     }
 }

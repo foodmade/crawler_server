@@ -14,7 +14,7 @@ public @interface BaseCheck {
      *
      * @return true需要 false不需要
      */
-    boolean needLogin() default true;
+    boolean needLogin() default false;
 
     /**
      * 入参检查bean class

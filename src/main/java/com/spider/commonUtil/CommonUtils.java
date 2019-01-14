@@ -7,6 +7,7 @@ import com.mongodb.DBObject;
 import com.spider.annotation.SerializeSign;
 import com.spider.commonUtil.mongoUtil.MongoUtil;
 import com.spider.entity.RedisModel;
+import com.spider.entity.mongoEntity.Account;
 import com.spider.spiderUtil.Item;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,8 @@ public class CommonUtils {
 
     @Inject
     private MongoUtil mongoUtil;
+    @Inject
+    private RedisCacheManager redisCacheManager;
 
     private static Logger logger = Logger.getLogger(CommonUtils.class);
 
@@ -257,6 +260,13 @@ public class CommonUtils {
         return redisModel;
     }
 
+    public static RedisModel createRedisMode(String key,Object value,Integer dataBase,int expire){
+        RedisModel redisModel = createRedisMode(key, value);
+        redisModel.setDatabase(dataBase);
+        redisModel.setExpire(expire);
+        return redisModel;
+    }
+
     public static RedisModel createRedisMode(String key,Object value){
         RedisModel redisModel = new RedisModel();
         redisModel.setKey(key);
@@ -288,4 +298,15 @@ public class CommonUtils {
         cs[0]-=32;
         return String.valueOf(cs);
     }
+
+    public void pushUserInfoToMemory(Account account, HttpServletRequest request) {
+        //缓存到redis  有效时间30分钟
+        try {
+            redisCacheManager.set(createRedisMode(request.getSession().getId(),account,Const._USER_SESSION_DB,RedisKey._TIME_MINUTE_ONE * 30));
+        } catch (Exception e) {
+            logger.error("加载用户信息到缓存失败 e:"+e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 }

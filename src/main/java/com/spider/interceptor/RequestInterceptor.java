@@ -30,7 +30,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         logger.debug("拦截ip:"+request.getRemoteAddr());
-
+        logger.info("sessionId:"+request.getSession().getId());
         try {
             if (handler instanceof HandlerMethod) {
                 HandlerMethod handlerMethod = (HandlerMethod) handler;
@@ -47,7 +47,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
 
                 //开始根据注解参数进行前置操作
                 //判断当前访问接口是否需要权限检查
-                Boolean needLogin = annotation.needLogin();
+                boolean needLogin = annotation.needLogin();
                 if(needLogin){
                     //开始检查session
                     String sessionId = request.getSession().getId();

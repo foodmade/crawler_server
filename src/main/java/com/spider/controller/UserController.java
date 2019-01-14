@@ -41,7 +41,6 @@ public class UserController {
 
     /**
      * 检查用户名是否已经存在
-     * @return
      */
     @RequestMapping(value = "checkUserNameExist.do",method = RequestMethod.POST)
     @ResponseBody
@@ -50,10 +49,33 @@ public class UserController {
         return userManageService.checkUserIsExist(paramModel);
     }
 
+    /**
+     * 登录
+     */
     @RequestMapping(value = "login.do",method = RequestMethod.POST)
     @ResponseBody
     @BaseCheck(needLogin = false,beanClazz = RegisterModel.class)
-    public BaseResult login(@RequestAttribute RegisterModel paramModel){
-        return userManageService.login(paramModel);
+    public BaseResult login(HttpServletRequest request,@RequestAttribute RegisterModel paramModel){
+        return userManageService.login(request,paramModel);
+    }
+
+    /**
+     * 检查是否登录
+     */
+    @RequestMapping(value = "isLogin.do",method = RequestMethod.POST)
+    @ResponseBody
+    @BaseCheck(needLogin = false,beanClazz = RegisterModel.class)
+    public BaseResult isLogin(HttpServletRequest request){
+        return userManageService.isLogin(request);
+    }
+
+    /**
+     * 注销登录
+     */
+    @RequestMapping(value = "logout.do",method = RequestMethod.POST)
+    @ResponseBody
+    @BaseCheck()
+    public BaseResult logout(HttpServletRequest request){
+        return userManageService.logout(request);
     }
 }

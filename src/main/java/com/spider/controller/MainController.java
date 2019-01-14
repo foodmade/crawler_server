@@ -54,4 +54,11 @@ public class MainController {
     public BaseResult sendEmail(HttpServletRequest request,String email){
         return mainService.sendEmail(request.getSession().getId(),email);
     }
+
+    /*
+    @RequestMapping(value = "getRotationImgs.do",method = RequestMethod.POST)
+    @ResponseBody
+    public BaseResult getRotationImgs(){
+        return mainService.getRotationImgs();
+    }*/
 }

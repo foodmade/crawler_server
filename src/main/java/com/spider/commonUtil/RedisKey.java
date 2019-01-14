@@ -4,7 +4,13 @@ public class RedisKey {
 
     private static final String PREFIX = "api";
 
-    public static final String CACHE_PREFIX = ":";
+    private static final String CACHE_PREFIX = ":";
+
+    public static final Integer _TIME_SECOND_ONE = 1;
+
+    public static final Integer _TIME_MINUTE_ONE = _TIME_SECOND_ONE * 60;
+
+    public static final Integer _TIME_HOUR_ONE = _TIME_MINUTE_ONE * 60;
 
     /**
      * 邮件注册验证码key
@@ -12,6 +18,14 @@ public class RedisKey {
      */
     public static String registerCodeKey(String key){
         return buildKey("registerCode",key);
+    }
+
+    /**
+     * 登录状态key
+     * @param key sessionId
+     */
+    public static String loginStatusKey(String key){
+        return buildKey("loginStatus",key);
     }
 
     private static String buildKey(Object str1, Object... array) {

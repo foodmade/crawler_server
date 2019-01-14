@@ -1,10 +1,10 @@
 package com.spider.service;
 
+import com.alibaba.fastjson.JSON;
 import com.spider.Vo.inModel.RegisterModel;
 import com.spider.commonUtil.*;
 import com.spider.commonUtil.RSA.RSAUtils;
 import com.spider.commonUtil.config.RSAConfig;
-import com.spider.commonUtil.mongoUtil.MongoUtil;
 import com.spider.entity.BaseResult;
 import com.spider.entity.mongoEntity.Account;
 import com.spider.entity.mongoEntity.UserDetailInfo;
@@ -34,6 +34,9 @@ public class UserManageService {
     @Inject
     private RSAConfig rsaConfig;
 
+    @Inject
+    private CommonUtils commonUtils;
+
     /**
      * 检查用户是否处于登陆状态
      */
@@ -50,7 +53,7 @@ public class UserManageService {
      * 从缓存获取用户信息
      */
     public String getUserInfoByCache(String sessionId){
-        return redisCacheManager.get(CommonUtils.createRedisMode(sessionId,null,Const._USER_SESSION_DB));
+        return redisCacheManager.get(CommonUtils.createRedisMode(RedisKey.loginStatusKey(sessionId),null,Const._USER_SESSION_DB));
     }
 
     /**
@@ -163,7 +166,7 @@ public class UserManageService {
         }
     }
 
-    public BaseResult login(RegisterModel paramModel) {
+    public BaseResult login(HttpServletRequest request,RegisterModel paramModel) {
         if(paramModel == null ||
                 CommonUtils.isEmpty(paramModel.getUsername()) ||
                 CommonUtils.isEmpty(paramModel.getPassword())){
@@ -178,7 +181,9 @@ public class UserManageService {
             //解密
             String encodePwd = RSAUtils.privateDecrypt(account.getPassword(), RSAUtils.getPrivateKey(rsaConfig.getPrivate_rsa()));
             if(paramModel.getPassword().equals(encodePwd)){
-                return BaseResult.success(null);
+                //刷新缓存登录状
+                commonUtils.pushUserInfoToMemory(account,request);
+                return BaseResult.success(account);
             }
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
@@ -197,5 +202,42 @@ public class UserManageService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public BaseResult isLogin(HttpServletRequest request) {
+        if(request == null || request.getSession() == null){
+            return BaseResult.makeResult(ExceptionEnum.REQUESTERR);
+        }
+        Account account = fetchUserInfoByRedis(request.getSession().getId());
+        if(account == null){
+            return BaseResult.makeResult(ExceptionEnum.USERLOGINEXPIRE);
+        }else{
+            return BaseResult.success(account);
+        }
+    }
+
+    /**
+     * 根据token 从redis中获取用户详情
+     */
+    public Account fetchUserInfoByRedis(String token){
+        String val = redisCacheManager.get(CommonUtils.createRedisMode(token,null));
+        if(CommonUtils.isEmpty(val)){
+            return null;
+        }else{
+            return JSON.parseObject(val,Account.class);
+        }
+    }
+
+    public BaseResult logout(HttpServletRequest request) {
+        if(request == null || request.getSession() == null){
+            return BaseResult.makeResult(ExceptionEnum.REQUESTERR);
+        }
+        try {
+            redisCacheManager.del(CommonUtils.createRedisMode(request.getSession().getId(),null));
+        } catch (Exception e) {
+            logger.error("注销登录失败 e:"+e.getMessage());
+            return BaseResult.makeResult(ExceptionEnum.SERVER_ERR);
+        }
+        return BaseResult.success(null);
     }
 }
