@@ -36,7 +36,7 @@ public class SaveEventListener extends AbstractMongoEventListener<Object> {
     private MongoTemplate mongoTemplate;
 
     @Inject
-    RSAConfig rsaConfig;
+    private RSAConfig rsaConfig;
 
     /**
      * 前置操作

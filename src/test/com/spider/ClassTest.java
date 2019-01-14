@@ -72,7 +72,7 @@ public class ClassTest extends BaseTest{
     public void testLinstener(){
         Account account = new Account();
         account.setPassword("111");
-        account.setPermissionLevel("1");
+        account.setPermissionLevel(1);
         account.setUserName("chen");
         account.setUserNick("xiaominmg");
         UserDetailInfo userDetailInfo = new UserDetailInfo();

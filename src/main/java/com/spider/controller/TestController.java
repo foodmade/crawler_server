@@ -55,7 +55,7 @@ public class TestController {
     public BaseResult testMongoJiLian(){
         Account account = new Account();
         account.setPassword("111");
-        account.setPermissionLevel("1");
+        account.setPermissionLevel(1);
         account.setUserName("chen");
         account.setUserNick("xiaominmg");
         mongoTemplate.insert(account);
