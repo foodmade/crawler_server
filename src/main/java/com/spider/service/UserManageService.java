@@ -1,6 +1,7 @@
 package com.spider.service;
 
 import com.alibaba.fastjson.JSON;
+import com.mongodb.BasicDBObject;
 import com.spider.Vo.inModel.RegisterModel;
 import com.spider.commonUtil.*;
 import com.spider.commonUtil.RSA.RSAUtils;
@@ -181,6 +182,7 @@ public class UserManageService {
             //解密
             String encodePwd = RSAUtils.privateDecrypt(account.getPassword(), RSAUtils.getPrivateKey(rsaConfig.getPrivate_rsa()));
             if(paramModel.getPassword().equals(encodePwd)){
+                account.setPassword(null);
                 //刷新缓存登录状
                 commonUtils.pushUserInfoToMemory(account,request);
                 return BaseResult.success(account);
@@ -195,8 +197,12 @@ public class UserManageService {
         if(CommonUtils.isEmpty(username)){
             return null;
         }
+        Query query = new Query(Criteria
+                .where("userName")
+                .is(username));
+//        query.fields().exclude("password");
         try {
-            return mongoTemplate.findOne(new Query(Criteria.where("userName").is(username)),Account.class);
+            return mongoTemplate.findOne(query,Account.class);
         } catch (Exception e) {
             logger.error("根据userName查询用户信息失败 {login.do}");
             e.printStackTrace();
@@ -220,7 +226,7 @@ public class UserManageService {
      * 根据token 从redis中获取用户详情
      */
     public Account fetchUserInfoByRedis(String token){
-        String val = redisCacheManager.get(CommonUtils.createRedisMode(token,null));
+        String val = redisCacheManager.get(CommonUtils.createRedisMode(token,null,Const._USER_SESSION_DB));
         if(CommonUtils.isEmpty(val)){
             return null;
         }else{
@@ -233,7 +239,7 @@ public class UserManageService {
             return BaseResult.makeResult(ExceptionEnum.REQUESTERR);
         }
         try {
-            redisCacheManager.del(CommonUtils.createRedisMode(request.getSession().getId(),null));
+            redisCacheManager.del(CommonUtils.createRedisMode(request.getSession().getId(),null,Const._USER_SESSION_DB));
         } catch (Exception e) {
             logger.error("注销登录失败 e:"+e.getMessage());
             return BaseResult.makeResult(ExceptionEnum.SERVER_ERR);

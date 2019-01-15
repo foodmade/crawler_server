@@ -1,5 +1,6 @@
 package com.spider.commonUtil;
 
+import com.alibaba.fastjson.JSON;
 import com.spider.entity.RedisModel;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
@@ -58,6 +59,7 @@ public class RedisCacheManager implements InitializingBean {
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
+            jedis.select(redisModel.getDatabase());
             jedis.del(redisModel.getKey());
         }catch (Exception e){
             logger.error("redis execute del fail e:"+e.getMessage());
@@ -115,7 +117,7 @@ public class RedisCacheManager implements InitializingBean {
             } else if (cls.equals(HashSet.class) || cls.equals(Set.class)) {
                 opsForHashSet(redisModel, jedis);
             } else {
-                opsForString(redisModel, jedis);
+                opsForObject(redisModel, jedis);
             }
         } catch (Exception e) {
             logger.error("操作redis时,发生异常 e:" + e.getMessage());
@@ -140,6 +142,26 @@ public class RedisCacheManager implements InitializingBean {
                 jedis.set(redisModel.getKey(),redisModel.getValue().toString());
             }else{
                 jedis.setex(redisModel.getKey(),expires,redisModel.getValue().toString());
+            }
+        } catch (Exception e) {
+            logger.error("执行setString操作时出现异常 e:"+e.getMessage());
+        }
+    }
+
+    /**
+     * Object操作
+     * @param redisModel
+     */
+    private void opsForObject(RedisModel redisModel,Jedis jedis) throws Exception {
+        int expires = redisModel.getExpire();
+        if(expires < 0){
+            throw new Exception("expire不能为负数");
+        }
+        try {
+            if(expires == 0){
+                jedis.set(redisModel.getKey(), JSON.toJSONString(redisModel.getValue()));
+            }else{
+                jedis.setex(redisModel.getKey(),expires,JSON.toJSONString(redisModel.getValue()));
             }
         } catch (Exception e) {
             logger.error("执行setString操作时出现异常 e:"+e.getMessage());
