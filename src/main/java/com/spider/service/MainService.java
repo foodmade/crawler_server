@@ -81,13 +81,19 @@ public class MainService {
         }
         List<Item> result = new ArrayList<>();
 
+        //判断是否存在播放源
+        DBObject isExistsSource = new BasicDBObject()
+                .append("$exists",true)
+                .append("$ne",new ArrayList<>());
+
         DBObject query = new BasicDBObject()
-                .append("videoName",CommonUtils.getPatternFiled(name));
+                .append("videoName",CommonUtils.getPatternFiled(name))
+                .append("videoSourceList",isExistsSource);
         DBCollection collection = mongoUtil.getMongoDB().getCollection(MongoTable._VIDEO_SOURCES);
         long count = collection.count(query);
         List<DBObject> items =  collection.find(query,CommonUtils.getFelid()).skip((page-1)*page_size).limit(page_size).toArray();
 
-        if(items == null || items.isEmpty()){
+        if(items.isEmpty()){
             return baseResult;
         }
 
