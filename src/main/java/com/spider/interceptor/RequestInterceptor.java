@@ -18,7 +18,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 
 public class RequestInterceptor extends HandlerInterceptorAdapter {
 
