@@ -1,11 +1,17 @@
 package com.spider.spiderUtil;
 
 import com.alibaba.fastjson.JSON;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class Item {
     /**
      * 电影封面图
@@ -52,93 +58,10 @@ public class Item {
      */
     private Integer year;
 
-    public String getAreacity() {
-        return areacity;
-    }
-
-    public void setAreacity(String areacity) {
-        this.areacity = areacity;
-    }
-
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(Integer year) {
-        this.year = year;
-    }
-
-    public Integer getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Integer parentId) {
-        this.parentId = parentId;
-    }
-
-    public Integer getCateId() {
-        return cateId;
-    }
-
-    public void setCateId(Integer cateId) {
-        this.cateId = cateId;
-    }
-
-    public List<HashMap<String, String>> getVideoSourceList() {
-        return videoSourceList;
-    }
-
-    public void setVideoSourceList(List<HashMap<String, String>> videoSourceList ) {
-        this.videoSourceList = videoSourceList;
-    }
-
-    public String getVideoDesc() {
-        return videoDesc;
-    }
-
-    public void setVideoDesc(String videoDesc) {
-        this.videoDesc = videoDesc;
-    }
-
-    public String getCoverImg() {
-        return coverImg;
-    }
-
-    public void setCoverImg(String coverImg) {
-        this.coverImg = coverImg;
-    }
-
-    public String getVideoType() {
-        return videoType;
-    }
-
-    public void setVideoType(String videoType) {
-        this.videoType = videoType;
-    }
-
-    public String getVideoName() {
-        return videoName;
-    }
-
-    public void setVideoName(String videoName) {
-        this.videoName = videoName;
-    }
-
-    public HashMap<String, List<String>> getFigures() {
-        return figures;
-    }
-
-    public void setFigures(HashMap<String, List<String>> figures) {
-        this.figures = figures;
-    }
-
-    public String getVideoId() {
-        return videoId;
-    }
-
-    public void setVideoId(String videoId) {
-        this.videoId = videoId;
-    }
+    /**
+     * 评分
+     */
+    private Double score;
 
     @Override
     public String toString() {

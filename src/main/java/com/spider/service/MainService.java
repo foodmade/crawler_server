@@ -6,11 +6,13 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.spider.commonUtil.*;
+import com.spider.commonUtil.emailUtil.EmailModel;
 import com.spider.commonUtil.mongoUtil.MongoTable;
 import com.spider.commonUtil.mongoUtil.MongoUtil;
 import com.spider.entity.BaseResult;
 import com.spider.enumUtil.ExceptionEnum;
 import com.spider.spiderUtil.Item;
+import org.apache.log4j.Logger;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,9 @@ import java.util.List;
 
 @Service
 public class MainService {
+
+    private static Logger logger = Logger.getLogger(MainService.class);
+
     @Inject
     private MongoUtil mongoUtil;
     @Inject
@@ -115,8 +120,9 @@ public class MainService {
         if(CommonUtils.isEmpty(sessionId)){
             return BaseResult.makeResult(ExceptionEnum.REQUESTERR);
         }
+        String key = RedisKey.registerCodeKey(sessionId);
         //检查发送邮件时间间隔
-        if(!checkSendIsTimeout(sessionId)){
+        if(!checkSendIsTimeout(key)){
             return BaseResult.makeResult(ExceptionEnum.LATERRETRY);
         }
         if(userManageService.userIsExist(email)){
@@ -124,24 +130,25 @@ public class MainService {
         }
         //获得随机验证码
         final String code = CommonUtils.randomCode();
-        //缓存验证码至redis
-        cacheCodeToRedis(code,RedisKey.registerCodeKey(sessionId));
+        final EmailModel eMdl = new EmailModel(email,"register","您的验证码","【Search Movies】your code:["+code+"]");
         //发送邮件
         try {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        emailUtil.sendMail(email,"您的验证码","【Search Movies】your code:["+code+"]");
+                        emailUtil.sendMail(eMdl);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }).start();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("【发送邮件出现异常 e:{"+e.getMessage()+"}】");
             return new BaseResult(ExceptionEnum.SERVER_ERR);
         }
+        //缓存验证码至redis
+        cacheCodeToRedis(code,key);
         return new BaseResult(ExceptionEnum.SUCCESS);
     }
 

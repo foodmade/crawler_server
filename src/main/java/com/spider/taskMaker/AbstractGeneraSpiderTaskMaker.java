@@ -81,16 +81,17 @@ public abstract class AbstractGeneraSpiderTaskMaker {
 
     public Object getTask(String curTaskType, HttpServletRequest request,String spiderType) {
         Object result;
-        if (curTaskType.equals(SpiderTypeConst.taskTypeUpdateConfigState)) {
-            result = getUpdateConfigTask(request);
-            log(request,curTaskType);
-            return result;
-        } else if (curTaskType.equals(SpiderTypeConst.taskTypeUpdateParserState)) {
-            result = getUpdateParserTask(request);
-            log(request,curTaskType);
-            return result;
-        } else if (curTaskType.equals(SpiderTypeConst.taskTypeCommonState)) {
-            return getCommonTask(request,spiderType);
+        switch (curTaskType) {
+            case SpiderTypeConst.taskTypeUpdateConfigState:
+                result = getUpdateConfigTask(request);
+                log(request, curTaskType);
+                return result;
+            case SpiderTypeConst.taskTypeUpdateParserState:
+                result = getUpdateParserTask(request);
+                log(request, curTaskType);
+                return result;
+            case SpiderTypeConst.taskTypeCommonState:
+                return getCommonTask(request, spiderType);
         }
         return null;
     }

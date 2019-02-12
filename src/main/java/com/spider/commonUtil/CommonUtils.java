@@ -160,7 +160,7 @@ public class CommonUtils {
      * 检验url是否合法
      */
     public static boolean isValidUrl(String urlString){
-        URI uri = null;
+        URI uri;
         try {
             uri = new URI(urlString);
         } catch (URISyntaxException e) {

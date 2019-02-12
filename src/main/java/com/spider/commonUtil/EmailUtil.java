@@ -1,5 +1,6 @@
 package com.spider.commonUtil;
 
+import com.spider.commonUtil.emailUtil.EmailModel;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -37,20 +38,16 @@ public class EmailUtil {
 
     /**
      * 发送邮件
-     *
-     * @param to 接受人
-     * @param subject 主题
-     * @param html 发送内容
      *  todo：暂时只支持QQ邮箱
      */
-    public void sendMail(String to, String subject, String html) throws Exception {
+    public void sendMail(EmailModel eMdl) throws Exception {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         // 设置utf-8或GBK编码，否则邮件会有乱码
         MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
         messageHelper.setFrom(emailProperties.getProperty("email.username"));
-        messageHelper.setTo(to);
-        messageHelper.setSubject(subject);
-        messageHelper.setText(html, true);
+        messageHelper.setTo(eMdl.getEmailAddress());
+        messageHelper.setSubject(eMdl.getSubject());
+        messageHelper.setText(eMdl.getEmailHtml(), true);
         mailSender.send(mimeMessage);
     }
 }
