@@ -3,6 +3,7 @@ package com.spider.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.mongodb.*;
+import com.spider.KQRobot.KQClient;
 import com.spider.commonUtil.EmailUtil;
 import com.spider.commonUtil.mongoUtil.MongoTable;
 import com.spider.commonUtil.mongoUtil.MongoUtil;
@@ -44,7 +45,7 @@ public class InitTaskService {
         emailUtil.initMailSender();
         //初始化酷Q客户端
         try {
-//            KQClient.runClient(appProperties.getProperty("kqHost"),robotOnMessageHandler);
+            KQClient.runClient(appProperties.getProperty("kqHost"),robotOnMessageHandler);
         } catch (Exception e) {
             logger.error("初始化KQ客户端异常 e:"+e.getMessage());
         }
