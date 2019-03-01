@@ -24,7 +24,7 @@ public class UserController {
      */
     @RequestMapping(value = "registerAccount.do",method = RequestMethod.POST)
     @ResponseBody
-    @BaseCheck(needLogin = false,beanClazz = RegisterModel.class)
+    @BaseCheck(beanClazz = RegisterModel.class)
     public BaseResult registerAccount(HttpServletRequest request, @RequestAttribute RegisterModel paramModel){
         return userManageService.registerAccount(request, paramModel);
     }
@@ -34,7 +34,7 @@ public class UserController {
      */
     @RequestMapping(value = "invalidEmailCode.do",method = RequestMethod.POST)
     @ResponseBody
-    @BaseCheck(needLogin = false,beanClazz = RegisterModel.class)
+    @BaseCheck(beanClazz = RegisterModel.class)
     public BaseResult invalidEmailCode(HttpServletRequest request,@RequestAttribute RegisterModel paramModel){
         return userManageService.checkEmailCode(request.getSession().getId(),paramModel.getCode());
     }
@@ -44,7 +44,7 @@ public class UserController {
      */
     @RequestMapping(value = "checkUserNameExist.do",method = RequestMethod.POST)
     @ResponseBody
-    @BaseCheck(needLogin = false,beanClazz = RegisterModel.class)
+    @BaseCheck(beanClazz = RegisterModel.class)
     public BaseResult checkUserNameExist(HttpServletRequest request,@RequestAttribute RegisterModel paramModel){
         return userManageService.checkUserIsExist(paramModel);
     }
@@ -54,7 +54,7 @@ public class UserController {
      */
     @RequestMapping(value = "login.do",method = RequestMethod.POST)
     @ResponseBody
-    @BaseCheck(needLogin = false,beanClazz = RegisterModel.class)
+    @BaseCheck(beanClazz = RegisterModel.class)
     public BaseResult login(HttpServletRequest request,@RequestAttribute RegisterModel paramModel){
         return userManageService.login(request,paramModel);
     }
@@ -64,7 +64,7 @@ public class UserController {
      */
     @RequestMapping(value = "isLogin.do",method = RequestMethod.POST)
     @ResponseBody
-    @BaseCheck(needLogin = false,beanClazz = RegisterModel.class)
+    @BaseCheck(beanClazz = RegisterModel.class)
     public BaseResult isLogin(HttpServletRequest request){
         return userManageService.isLogin(request);
     }
@@ -74,7 +74,7 @@ public class UserController {
      */
     @RequestMapping(value = "logout.do",method = RequestMethod.POST)
     @ResponseBody
-    @BaseCheck()
+    @BaseCheck(needLogin = true)
     public BaseResult logout(HttpServletRequest request){
         return userManageService.logout(request);
     }

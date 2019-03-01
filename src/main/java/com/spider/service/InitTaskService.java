@@ -45,7 +45,7 @@ public class InitTaskService {
         emailUtil.initMailSender();
         //初始化酷Q客户端
         try {
-            KQClient.runClient(appProperties.getProperty("kqHost"),robotOnMessageHandler);
+//            KQClient.runClient(appProperties.getProperty("kqHost"),robotOnMessageHandler);
         } catch (Exception e) {
             logger.error("初始化KQ客户端异常 e:"+e.getMessage());
         }

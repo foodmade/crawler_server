@@ -302,7 +302,7 @@ public class CommonUtils {
     public void pushUserInfoToMemory(Account account, HttpServletRequest request) {
         //缓存到redis  有效时间30分钟
         try {
-            redisCacheManager.set(createRedisMode(request.getSession().getId(),account,Const._USER_SESSION_DB,RedisKey._TIME_MINUTE_ONE * 30));
+            redisCacheManager.set(createRedisMode(RedisKey.loginStatusKey(request.getSession().getId()),account,Const._USER_SESSION_DB,RedisKey._TIME_MINUTE_ONE * 30));
         } catch (Exception e) {
             logger.error("加载用户信息到缓存失败 e:"+e.getMessage());
             e.printStackTrace();

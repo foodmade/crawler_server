@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
+import java.util.Optional;
 
 
 public class ClassTest extends BaseTest{
@@ -34,7 +35,12 @@ public class ClassTest extends BaseTest{
     public static void main(String[] args) throws Exception {
         RegisterModel registerModel = new RegisterModel();
 
-        System.out.println(JSON.toJSONString(CommonUtils.getDBObject(registerModel)));
+        Optional<RegisterModel> optModel = Optional.of(registerModel);
+
+        Boolean b = optModel.map(u -> (u.getUsername()==null))
+                .orElse(true);
+
+        System.out.println(b);
 
     }
 

@@ -225,7 +225,7 @@ public class UserManageService {
      * 根据token 从redis中获取用户详情
      */
     public Account fetchUserInfoByRedis(String token){
-        String val = redisCacheManager.get(CommonUtils.createRedisMode(token,null,Const._USER_SESSION_DB));
+        String val = redisCacheManager.get(CommonUtils.createRedisMode(RedisKey.loginStatusKey(token),null,Const._USER_SESSION_DB));
         if(CommonUtils.isEmpty(val)){
             return null;
         }else{
@@ -238,7 +238,7 @@ public class UserManageService {
             return BaseResult.makeResult(ExceptionEnum.REQUESTERR);
         }
         try {
-            redisCacheManager.del(CommonUtils.createRedisMode(request.getSession().getId(),null,Const._USER_SESSION_DB));
+            redisCacheManager.del(CommonUtils.createRedisMode(RedisKey.loginStatusKey(request.getSession().getId()),null,Const._USER_SESSION_DB));
         } catch (Exception e) {
             logger.error("注销登录失败 e:"+e.getMessage());
             return BaseResult.makeResult(ExceptionEnum.SERVER_ERR);
