@@ -1,5 +1,14 @@
 package com.spider.entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
 public class UserModel {
 
     private String usernick;
@@ -9,36 +18,4 @@ public class UserModel {
     private String password;
 
     private String code;
-
-    public String getUsernick() {
-        return usernick;
-    }
-
-    public void setUsernick(String usernick) {
-        this.usernick = usernick;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 }

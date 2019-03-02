@@ -13,7 +13,12 @@ import com.spider.entity.BaseResult;
 import com.spider.enumUtil.ExceptionEnum;
 import com.spider.spiderUtil.Item;
 import org.apache.log4j.Logger;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -49,28 +54,23 @@ public class MainService {
         if(CommonUtils.isEmpty(videoId)){
             return new BaseResult(ExceptionEnum.PARAMEMPTYPEROR);
         }
-        DBCollection collection = mongoUtil
-                .getMongoDB()
-                .getCollection(MongoTable._VIDEO_SOURCES);
 
-        //判断是否存在播放源
-        DBObject isExistsSource = new BasicDBObject()
-                .append("$exists",true)
-                .append("$ne",new ArrayList<>());
+        Query query = new Query();
+        query.addCriteria(new Criteria().andOperator(
+                Criteria.where("cateId").is(Integer.parseInt(videoId)),
+                Criteria.where("videoSourceList")
+                        .ne(new ArrayList<>())
+                        .exists(true)
+        ));
 
-        DBObject queryDB = new BasicDBObject()
-                        .append("cateId",Integer.parseInt(videoId))
-                        .append("videoSourceList",isExistsSource);
+        Pageable pageable = new PageRequest(page, page_size);
+        query.with(pageable);
 
-        long count = collection
-                .count(queryDB);
+        Long count = mongoTemplate.count(query,Item.class);
 
-        List<DBObject> videoList = collection
-                .find(queryDB,CommonUtils.getFelid())
-                .skip((page-1)*page_size)
-                .limit(page_size)
-                .toArray();
-        BaseResult result = new BaseResult(videoList);
+        List<Item> items = mongoTemplate.find(query,Item.class);
+
+        BaseResult result = new BaseResult(items);
         result.setPageSize(page_size);
         result.setPage(page);
         result.setTotal(count);
@@ -158,5 +158,21 @@ public class MainService {
 
     private void cacheCodeToRedis(String code, String key) {
         redisCacheManager.set(CommonUtils.createRedisMode(key, code, Const._AUTHCODE_DEFAULT_TIME));
+    }
+
+    public BaseResult movieDotPraise(Item model) {
+        if(CommonUtils.isEmpty(model.getMovieid())){
+            return BaseResult.makeResult(ExceptionEnum.PARAMEMPTYPEROR);
+        }
+        Query query = new Query(Criteria.where("_id").is(model.getMovieid()));
+
+        Update update = new Update().inc("dotcnt",1);
+
+        try {
+            mongoTemplate.upsert(query,update,Item.class);
+        } catch (Exception e) {
+            return BaseResult.makeResult(ExceptionEnum.SERVER_ERR);
+        }
+        return BaseResult.success(null);
     }
 }

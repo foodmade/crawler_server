@@ -9,7 +9,9 @@ import com.spider.commonUtil.mongoUtil.MongoUtil;
 import com.spider.entity.RedisModel;
 import com.spider.entity.mongoEntity.Account;
 import com.spider.spiderUtil.Item;
+import lombok.Getter;
 import org.apache.log4j.Logger;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -24,6 +26,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
 
+@Getter
 @Component
 public class CommonUtils {
 
@@ -31,6 +34,8 @@ public class CommonUtils {
     private MongoUtil mongoUtil;
     @Inject
     private RedisCacheManager redisCacheManager;
+    @Inject
+    private MongoTemplate mongoTemplate;
 
     private static Logger logger = Logger.getLogger(CommonUtils.class);
 

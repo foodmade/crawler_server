@@ -3,6 +3,7 @@ package com.spider.entity.mongoEntity;
 import com.spider.annotation.BranchSave;
 import com.spider.annotation.Encrypted;
 import com.spider.annotation.IncKey;
+import com.spider.listener.Inckeystrategy.IncreaseStrategy;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -19,7 +20,7 @@ public class Account {
 
     @Field
     @ApiModelProperty(value = "用户id")
-    @IncKey
+    @IncKey(strategyCls = IncreaseStrategy.class)
     @Id
     private Long userId = 0L;
 

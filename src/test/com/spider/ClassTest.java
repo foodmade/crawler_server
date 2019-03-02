@@ -5,12 +5,16 @@ import com.spider.Vo.inModel.RegisterModel;
 import com.spider.commonUtil.*;
 import com.spider.commonUtil.RSA.RSAUtils;
 import com.spider.commonUtil.config.RSAConfig;
+import com.spider.commonUtil.mongoUtil.MongoTable;
 import com.spider.commonUtil.mongoUtil.MongoUtil;
 import com.spider.entity.mongoEntity.Account;
 import com.spider.entity.mongoEntity.SeqInfo;
 import com.spider.entity.mongoEntity.UserDetailInfo;
+import com.spider.spiderUtil.Item;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import javax.inject.Inject;
 import java.security.NoSuchAlgorithmException;
@@ -70,15 +74,9 @@ public class ClassTest extends BaseTest{
 
     @Test
     public void testLinstener(){
-        Account account = new Account();
-        account.setPassword("111");
-        account.setPermissionLevel(1);
-        account.setUserName("chen");
-        account.setUserNick("xiaominmg");
-        UserDetailInfo userDetailInfo = new UserDetailInfo();
-        userDetailInfo.setCordId("511623199601197670");
-        account.setUserDetailInfo(userDetailInfo);
-        mongoTemplate.insert(account);
+
+        List<Item> list = mongoTemplate.find(new Query(Criteria.where("videoName").is("人生2012")),Item.class);
+        System.out.println(JSON.toJSONString(list));
     }
 
 }

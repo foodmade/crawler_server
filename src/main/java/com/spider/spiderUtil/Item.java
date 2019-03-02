@@ -1,9 +1,16 @@
 package com.spider.spiderUtil;
 
-import com.alibaba.fastjson.JSON;
+import com.spider.annotation.IncKey;
+import com.spider.commonUtil.mongoUtil.MongoTable;
+import com.spider.listener.Inckeystrategy.UUIDStrategy;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,59 +19,68 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
+@Document(collection = "m_video_sources")
 public class Item {
-    /**
-     * 电影封面图
-     */
+    @Field
+    @ApiModelProperty(value = "电影封面图")
     private String coverImg;
-    /**
-     * 影片类型
-     */
+
+    @Field
+    @ApiModelProperty(value = "影片类型")
     private String videoType;
-    /**
-     * 电影名称
-     */
+
+    @Field
+    @ApiModelProperty(value = "电影名称")
     private String videoName;
-    /**
-     * 电影详细信息 导演 演员
-     */
+
+    @Field
+    @ApiModelProperty(value = "电影详细信息 导演 演员")
     private HashMap<String, List<String>> figures;
-    /**
-     * 电影id
-     */
+
+    @Field
+    @ApiModelProperty(value = "电影id")
     private String videoId;
-    /**
-     * 电影播放地址 key --> 地址描述  value-->视频地址
-     */
+
+    @Field
+    @ApiModelProperty(value = "电影播放地址 key --> 地址描述  value-->视频地址")
     private List<HashMap<String,String>> videoSourceList = new ArrayList<>();
-    /**
-     * 电影简介
-     */
+
+    @Field
+    @ApiModelProperty(value = "电影简介")
     private String videoDesc;
-    /**
-     * 电影父类Id
-     */
+
+    @Field
+    @ApiModelProperty(value = "被喜电影父类Id欢数量")
     private Integer parentId;
-    /**
-     * 电影所属类目
-     */
+
+    @Field
+    @ApiModelProperty(value = "电影所属类目")
     private Integer cateId;
-    /**
-     * 地区
-     */
+
+    @Field
+    @ApiModelProperty(value = "地区")
     private String areacity;
-    /**
-     * 年份
-     */
+
+    @Field
+    @ApiModelProperty(value = "年份")
     private Integer year;
 
-    /**
-     * 评分
-     */
-    private Double score;
+    @Field
+    @ApiModelProperty(value = "评分")
+    private Double score = 5.2;
 
-    @Override
-    public String toString() {
-        return JSON.toJSONString(this);
-    }
+    @Field
+    @ApiModelProperty(value = "被喜欢数量")
+    private Integer favoritecnt = 0;
+
+    @Field
+    @ApiModelProperty(value = "点赞")
+    private Integer dotcnt = 0;
+
+    @Field
+    @ApiModelProperty(value = "电影id")
+    @Id
+    private String movieid;
+
 }

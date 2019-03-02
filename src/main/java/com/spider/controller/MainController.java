@@ -3,7 +3,9 @@ package com.spider.controller;
 import com.spider.annotation.BaseCheck;
 import com.spider.entity.BaseResult;
 import com.spider.service.MainService;
+import com.spider.spiderUtil.Item;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -55,10 +57,13 @@ public class MainController {
         return mainService.sendEmail(request.getSession().getId(),email);
     }
 
-    /*
-    @RequestMapping(value = "getRotationImgs.do",method = RequestMethod.POST)
+    /**
+     * 点赞
+     */
+    @RequestMapping(value = "movieDotPraise.do",method = RequestMethod.POST)
     @ResponseBody
-    public BaseResult getRotationImgs(){
-        return mainService.getRotationImgs();
-    }*/
+    @BaseCheck(beanClazz = Item.class)
+    public BaseResult movieDotPraise(HttpServletRequest request, @RequestAttribute Item paramModel){
+        return mainService.movieDotPraise(paramModel);
+    }
 }
