@@ -12,6 +12,7 @@ import com.spider.commonUtil.RSA.RSAUtils;
 import com.spider.commonUtil.config.RSAConfig;
 import com.spider.listener.Inckeystrategy.AbsStrategy;
 import org.apache.log4j.Logger;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent;
 import org.springframework.util.ReflectionUtils;
@@ -45,7 +46,7 @@ public class SaveEventListener extends AbstractMongoEventListener<Object> {
                     //获取生成策略
                     IncKey incKey = field.getAnnotation(IncKey.class);
                     // 设置自增ID
-                    field.set(source,genId(incKey));
+                    field.set(source,genId(incKey,source));
                 }
                 // 如果字段添加了自定义的Encrypted注解 则代表文本需要加密
                 if(field.isAnnotationPresent(Encrypted.class)){
@@ -71,11 +72,12 @@ public class SaveEventListener extends AbstractMongoEventListener<Object> {
     }
 
 
-    private Object genId(IncKey incKey) {
+    private Object genId(IncKey incKey,Object source) {
         try {
+            String collection = source.getClass().getAnnotation(Document.class).collection();
             Constructor<? extends AbsStrategy> cons =
-                    incKey.strategyCls().getConstructor(CommonUtils.class);
-            AbsStrategy strategy = cons.newInstance(commonUtils);
+                    incKey.strategyCls().getConstructor(CommonUtils.class,String.class);
+            AbsStrategy strategy = cons.newInstance(commonUtils,collection);
             return strategy.doGenId();
         } catch (InstantiationException | IllegalAccessException e) {
             logger.error("执行id策略器的时候发生异常 e:"+e.getMessage());

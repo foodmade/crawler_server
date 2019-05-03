@@ -6,6 +6,9 @@ import com.spider.commonUtil.*;
 import com.spider.commonUtil.RSA.RSAUtils;
 import com.spider.commonUtil.config.RSAConfig;
 import com.spider.commonUtil.mongoUtil.MongoUtil;
+import com.spider.controller.MainController;
+import com.spider.controller.UserController;
+import com.spider.entity.mongoEntity.Account;
 import com.spider.entity.mongoEntity.SeqInfo;
 import com.spider.spiderUtil.Item;
 import org.junit.Test;
@@ -14,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
@@ -32,6 +36,10 @@ public class ClassTest extends BaseTest{
     MongoTemplate mongoTemplate;
     @Inject
     RSAConfig rsaConfig;
+    @Inject
+    MainController mainController;
+    @Inject
+    UserController userController;
 
     public static void main(String[] args) throws Exception {
         RegisterModel registerModel = new RegisterModel();
@@ -74,6 +82,28 @@ public class ClassTest extends BaseTest{
 
         List<Item> list = mongoTemplate.find(new Query(Criteria.where("videoName").is("人生2012")),Item.class);
         System.out.println(JSON.toJSONString(list));
+    }
+
+    @Test
+    public void testCollectMovie(){
+
+        Account account = new Account();
+        account.setUserNick("chen");
+        account.setUserId(1L);
+
+        System.out.println(JSON.toJSONString( mainController.collectionMovie(null,account,"5c110992eb664ceeed82bb0f")));
+    }
+
+    @Test
+    public void testRegister(){
+
+        Account account = new Account();
+        account.setUserNick("test");
+        account.setUserName("test name");
+        account.setPassword("fdnsu");
+        account.setPermissionLevel(1);
+
+        mongoTemplate.insert(account);
     }
 
 }

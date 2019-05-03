@@ -2,7 +2,8 @@ package com.spider.controller;
 
 import com.spider.annotation.BaseCheck;
 import com.spider.entity.BaseResult;
-import com.spider.service.MainService;
+import com.spider.entity.mongoEntity.Account;
+import com.spider.service.dao.MainServiceDao;
 import com.spider.spiderUtil.Item;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -12,13 +13,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 
 @Controller
 public class MainController {
 
     @Inject
-    MainService mainService;
+    MainServiceDao mainService;
 
     /**
      * 获取菜单信息
@@ -65,5 +65,17 @@ public class MainController {
     @BaseCheck(beanClazz = Item.class)
     public BaseResult movieDotPraise(HttpServletRequest request, @RequestAttribute Item paramModel){
         return mainService.movieDotPraise(paramModel);
+    }
+
+    /**
+     * 收藏影片
+     * @param userAccessTokenBean  登录用户信息
+     * @param movieId 影片唯一id
+     */
+    @RequestMapping(value = "collectionMovie.do",method = RequestMethod.GET)
+    @ResponseBody
+    @BaseCheck(needLogin = true,needCheckParameter = false)
+    public BaseResult collectionMovie(HttpServletRequest request, @RequestAttribute Account userAccessTokenBean, String movieId){
+        return mainService.collectionMovie(userAccessTokenBean,movieId);
     }
 }

@@ -7,6 +7,7 @@ import com.mongodb.DBObject;
 import com.spider.annotation.SerializeSign;
 import com.spider.commonUtil.mongoUtil.MongoUtil;
 import com.spider.entity.RedisModel;
+import com.spider.entity.UserModel;
 import com.spider.entity.mongoEntity.Account;
 import com.spider.spiderUtil.Item;
 import lombok.Getter;
@@ -109,6 +110,15 @@ public class CommonUtils {
 
     public static String randomCode() {
         return ((int) (Math.random() * 9000) +1000)+"";
+    }
+
+    public static UserModel accountTransModel(Account user) {
+
+        UserModel userModel = new UserModel();
+
+        userModel.setUsernick(user.getUserNick());
+
+        return null;
     }
 
     public MongoUtil getMongoUtil() {

@@ -1,8 +1,5 @@
 package com.spider.spiderUtil;
 
-import com.spider.annotation.IncKey;
-import com.spider.commonUtil.mongoUtil.MongoTable;
-import com.spider.listener.Inckeystrategy.UUIDStrategy;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

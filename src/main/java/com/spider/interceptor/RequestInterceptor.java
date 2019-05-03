@@ -8,6 +8,7 @@ import com.spider.commonUtil.Const;
 import com.spider.commonUtil.Validator;
 import com.spider.commonUtil.exception.UserExpireException;
 import com.spider.entity.UserModel;
+import com.spider.entity.mongoEntity.Account;
 import com.spider.enumUtil.ExceptionEnum;
 import com.spider.service.UserManageService;
 import org.apache.log4j.Logger;
@@ -63,7 +64,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
                 }
 
                 //检查是否需要参数实例化
-                Boolean needCheckParameter = annotation.needCheckParameter();
+                boolean needCheckParameter = annotation.needCheckParameter();
                 if(needCheckParameter){
                     // 参数字符串
                     String jsonString = CommonUtils.readRequestBuff(request);
@@ -106,7 +107,11 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
         }
 
         try {
-            UserModel user = JSON.parseObject(userInfo,UserModel.class);
+            Account user = JSON.parseObject(userInfo, Account.class);
+            if(user == null){
+                return false;
+            }
+
             request.setAttribute(Const._USER_SESSION_KEY,user);
         } catch (Exception e) {
             e.printStackTrace();

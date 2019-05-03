@@ -38,6 +38,13 @@ public class BaseResult {
         this.responseBody = responseBody;
     }
 
+    public static BaseResult makeExceptionResult(String message){
+        BaseResult result = new BaseResult();
+        result.setMessage(message);
+        result.setCode(ExceptionEnum.UNKNOWNERR.getCode());
+        return result;
+    }
+
     public BaseResult(){}
 
     public Integer getPage() {
