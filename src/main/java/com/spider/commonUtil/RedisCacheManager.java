@@ -1,6 +1,7 @@
 package com.spider.commonUtil;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.spider.entity.RedisModel;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
@@ -80,7 +81,7 @@ public class RedisCacheManager implements InitializingBean {
         jedis.close();
     }
 
-    private String opsGet(RedisModel redisModel){
+    public String opsGet(RedisModel redisModel){
         if(jedisPool == null){
             afterPropertiesSet();
         }
@@ -173,7 +174,11 @@ public class RedisCacheManager implements InitializingBean {
      * @param redisModel
      */
     private void opsForHashMap(RedisModel redisModel,Jedis jedis){
-
+        try {
+            jedis.hmset(redisModel.getKey(),JSON.parseObject(redisModel.getValue().toString(),new TypeReference<Map<String,String>>(){}));
+        } catch (Exception e) {
+            logger.error("【redis：opsForHashMap执行失败 e:"+ e.getMessage() +"】");
+        }
     }
 
     /**
@@ -181,7 +186,15 @@ public class RedisCacheManager implements InitializingBean {
      * @param redisModel
      */
     private void opsForHashSet(RedisModel redisModel,Jedis jedis){
-
+        try {
+            List<String> list = JSON.parseObject(JSON.toJSONString(redisModel.getValue()),new TypeReference<List<String>>(){});
+            jedis.multi();
+            list.forEach(item -> jedis.sadd(redisModel.getKey(),item));
+        } catch (Exception e) {
+            logger.error("【redis：opsForHashMap执行失败 e:"+ e.getMessage() +"】");
+        }finally {
+            jedis.sync();
+        }
     }
 
     /**

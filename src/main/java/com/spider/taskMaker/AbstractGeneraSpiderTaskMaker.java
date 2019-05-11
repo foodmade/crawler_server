@@ -431,7 +431,6 @@ public abstract class AbstractGeneraSpiderTaskMaker {
             return;
         }
         List<Item> data = new ArrayList<>(cacheItems.values());
-        logger.debug("data:"+JSON.toJSONString(data));
 
         long start = System.currentTimeMillis();
         try {
@@ -442,6 +441,7 @@ public abstract class AbstractGeneraSpiderTaskMaker {
             logger.error("保存采集数据失败 e:"+e.getMessage());
             e.printStackTrace();
         }
-        logger.info("保存数据完毕 耗时:"+(System.currentTimeMillis()-start));
+        logger.info("【保存数据完毕 耗时】:"+(System.currentTimeMillis()-start));
+        logger.info("【资源更新完毕：】taskType:{"+workData.getTaskData().getTask_type()+"} size:{"+data.size()+"}");
     }
 }

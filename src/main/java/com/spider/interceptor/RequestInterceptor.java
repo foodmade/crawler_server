@@ -2,10 +2,7 @@ package com.spider.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.spider.annotation.BaseCheck;
-import com.spider.commonUtil.ApiRequestSupport;
-import com.spider.commonUtil.CommonUtils;
-import com.spider.commonUtil.Const;
-import com.spider.commonUtil.Validator;
+import com.spider.commonUtil.*;
 import com.spider.commonUtil.exception.UserExpireException;
 import com.spider.entity.UserModel;
 import com.spider.entity.mongoEntity.Account;
@@ -19,6 +16,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.*;
 
 public class RequestInterceptor extends HandlerInterceptorAdapter {
 
@@ -26,11 +24,14 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
 
     @Inject
     private UserManageService userManageService;
+    @Inject
+    private RedisCacheManager redisCacheManager;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         logger.debug("拦截ip:"+request.getRemoteAddr());
         logger.debug("sessionId:"+request.getSession().getId());
+        recordRequestIp(request.getRemoteAddr());
         try {
             if (handler instanceof HandlerMethod) {
                 HandlerMethod handlerMethod = (HandlerMethod) handler;
@@ -89,6 +90,18 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
         }
 
         return true;
+    }
+
+    private void recordRequestIp(String remoteAddr) {
+
+        Set<String> ipList = new HashSet<>();
+        ipList.add(remoteAddr);
+
+        try {
+            redisCacheManager.set(CommonUtils.createRedisMode(DateUtils.formatYMD(new Date()),ipList,Const._RECORD_ID_DB));
+        } catch (Exception e) {
+            logger.error("【Request Ip Source Record Fail e:】" + e.getMessage());
+        }
     }
 
     private <T> T getModel(String json, Class<T> clazz) throws Exception {

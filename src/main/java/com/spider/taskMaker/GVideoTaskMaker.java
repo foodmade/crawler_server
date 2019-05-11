@@ -1,20 +1,10 @@
 package com.spider.taskMaker;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.spider.commonUtil.CommonUtils;
-import com.spider.commonUtil.SpiderTypeConst;
-import com.spider.enumUtil.SaveEnum;
-import com.spider.spiderUtil.Item;
 import com.spider.spiderUtil.TaskOptions;
 import com.spider.spiderUtil.WorkData;
-import com.spider.spiderUtil.saveUtil.AbsSave;
 import com.spider.taskPool.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class GVideoTaskMaker extends AbstractGeneraSpiderTaskMaker {
 

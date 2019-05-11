@@ -5,14 +5,18 @@ import com.alibaba.fastjson.TypeReference;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.spider.annotation.SerializeSign;
+import com.spider.commonUtil.config.RedisCacheConfig;
 import com.spider.commonUtil.mongoUtil.MongoUtil;
 import com.spider.entity.RedisModel;
 import com.spider.entity.UserModel;
 import com.spider.entity.mongoEntity.Account;
+import com.spider.entity.mongoEntity.BaseTask;
 import com.spider.spiderUtil.Item;
 import lombok.Getter;
 import org.apache.log4j.Logger;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -68,34 +72,49 @@ public class CommonUtils {
             }
             try {
                 Object oj = f.get(bean);
-                if (oj == null) {
-                    obj.put(name, "");
-                } else if (oj instanceof Integer) {
-                    int value = (Integer) oj;
-                    obj.put(name, value);
-                } else if (oj instanceof Double) {
-                    Double value = (Double) oj;
-                    obj.put(name, value);
-                } else if (oj instanceof Float) {
-                    Float value = (Float) oj;
-                    obj.put(name, value);
-                } else if (oj instanceof Boolean) {
-                    Boolean value = (Boolean) oj;
-                    obj.put(name, value);
-                } else if (oj instanceof Long) {
-                    Long value = (Long) oj;
-                    obj.put(name, value);
-                } else {
-                    obj.put(name, oj);
-                }
-
+                obj.put(name, getValueCut(oj));
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
         return obj;
 
+    }
+
+    public static Object getValueCut(Object oj){
+        if (oj == null) {
+            return null;
+        } else if (oj instanceof Integer) {
+            return Integer.parseInt(oj + "");
+        } else if (oj instanceof Double) {
+            return Double.parseDouble(oj + "");
+        } else if (oj instanceof Float) {
+            return Float.parseFloat(oj +"");
+        } else if (oj instanceof Boolean) {
+            return Boolean.parseBoolean(oj + "");
+        } else if (oj instanceof Long) {
+           return Long.parseLong(oj + "");
+        } else {
+            return oj;
+        }
+    }
+
+    public static Object getValueDefault(Class<?> cls){
+        if (cls == null) {
+            return 0;
+        } else if (cls.getName().equals("Integer")) {
+            return 0;
+        } else if (cls.getName().equals("Double")) {
+            return 0.00;
+        } else if (cls.getName().equals("Float")) {
+            return 0.0F;
+        } else if (cls.getName().equals("Boolean")) {
+            return false;
+        } else if (cls.getName().equals("Long")) {
+            return 0L;
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -321,6 +340,17 @@ public class CommonUtils {
         } catch (Exception e) {
             logger.error("加载用户信息到缓存失败 e:"+e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    public void updateBaseTaskStatus(Integer status) {
+        try {
+            mongoTemplate.updateMulti(new Query(),
+                      Update.update("status", status)
+                            .addToSet("maxPage", RedisCacheConfig.getRedisConfigVal("maxPage",Integer.class)),
+                    BaseTask.class);
+        } catch (Exception e) {
+            logger.error("【m_base_task任务状态更新失败 e:】" + e.getMessage() + "");
         }
     }
 

@@ -4,13 +4,22 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.mongodb.*;
 import com.spider.KQRobot.KQClient;
+import com.spider.commonUtil.CommonUtils;
 import com.spider.commonUtil.EmailUtil;
+import com.spider.commonUtil.config.RedisCacheConfig;
 import com.spider.commonUtil.mongoUtil.MongoTable;
 import com.spider.commonUtil.mongoUtil.MongoUtil;
 import com.spider.commonUtil.RobotOnMessageHandler;
+import com.spider.entity.mongoEntity.BaseTask;
+import com.spider.taskPool.TaskConst;
 import com.spider.taskPool.TaskParams;
 import com.spider.taskPool.TaskPool;
 import org.apache.log4j.Logger;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -27,20 +36,19 @@ public class InitTaskService {
 
     @Inject
     MongoUtil mongoUtil;
-
-    @Inject
-    Properties appProperties;
-
-    @Inject
-    RobotOnMessageHandler robotOnMessageHandler;
-
     @Inject
     EmailUtil emailUtil;
+    @Inject
+    CommonUtils commonUtils;
+    @Inject
+    RedisCacheConfig redisCacheConfig;
 
     @PostConstruct
     private void initTask(){
         //初始化任务池
         initAllTaskOptions();
+        //初始化redisConfig
+        redisCacheConfig.loadRedisConfig();
         //初始化邮件发送器
         emailUtil.initMailSender();
         //初始化酷Q客户端
@@ -49,6 +57,24 @@ public class InitTaskService {
         } catch (Exception e) {
             logger.error("初始化KQ客户端异常 e:"+e.getMessage());
         }
+    }
+
+    /**
+     * 任务调度 每隔10天 激活任务 等待爬虫执行
+     */
+    @Scheduled(cron = "0 0 0 1/10 * ? ")
+    public void taskStatusScheduled(){
+        commonUtils.updateBaseTaskStatus(TaskConst._OPEN_TASK_STATUS);
+        logger.info("【baseTask任务状态激活成功,创建爬虫任务】");
+        initAllTaskOptions();
+    }
+
+    /**
+     * 每隔5分钟刷新redis配置到内存
+     */
+    @Scheduled(cron = "0 0/5 0 1/10 * ? ")
+    public void updateRedisConfig(){
+        redisCacheConfig.loadRedisConfig();
     }
 
     /**
@@ -63,7 +89,11 @@ public class InitTaskService {
         }
         //将任务添加至任务池
         createTaskToPool(allTasks);
+
+        //将任务状态定义为0 等待下一次更新资源时开启任务
+        commonUtils.updateBaseTaskStatus(TaskConst._STOP_TASK_STATUS);
     }
+
 
     private void createTaskToPool(List<DBObject> allTasks) {
         long start = System.currentTimeMillis();
